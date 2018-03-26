@@ -18,8 +18,7 @@ namespace CoreImageGallery.Services
         private readonly CloudStorageAccount _account;
         private readonly CloudBlobClient _client;
         //private readonly HttpClient _httpClient;
-        private readonly string imagePrefix = "img_";
-        private readonly string metaDataPrefix = "metadata_";
+        private readonly string _imagePrefix = "img_";
         private readonly string _connectionString;
         private CloudBlobContainer _container;
 
@@ -48,7 +47,7 @@ namespace CoreImageGallery.Services
         {
             await InitializeBlobStorageAsync();
 
-            var imageGuid = Guid.NewGuid();
+            fileName = _imagePrefix + fileName;
             var imageBlob = _container.GetBlockBlobReference(fileName);
             await imageBlob.UploadFromStreamAsync(stream);
 
@@ -67,8 +66,8 @@ namespace CoreImageGallery.Services
 
             var imageList = new List<Image>();
             var token = new BlobContinuationToken();
-            var blobList = await _container.ListBlobsSegmentedAsync("", token);
-
+            var blobList = await _container.ListBlobsSegmentedAsync("", true, BlobListingDetails.All, 100, token, null, null);
+            
             foreach (var blob in blobList.Results)
             {
                 var image = new Image
