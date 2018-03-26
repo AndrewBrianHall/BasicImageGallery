@@ -57,8 +57,6 @@ namespace CoreImageGallery.Services
             };
         }
 
-        
-
         public async Task<IEnumerable<Image>> GetImagesAsync()
         {
             await InitializeBlobStorageAsync();
