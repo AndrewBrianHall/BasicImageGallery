@@ -15,16 +15,15 @@ namespace CoreImageGallery.Services
 {
     public class AzStorageService : IStorageService
     {
+        private const string ImagePrefix = "img_";
+
         private readonly CloudStorageAccount _account;
         private readonly CloudBlobClient _client;
-        //private readonly HttpClient _httpClient;
-        private readonly string _imagePrefix = "img_";
         private readonly string _connectionString;
         private CloudBlobContainer _container;
 
         public AzStorageService(IConfiguration config)
         {
-            //_httpClient = httpClient;
             _connectionString = config["AzureStorageConnectionString"];
             _account = CloudStorageAccount.Parse(_connectionString);
             _client = _account.CreateCloudBlobClient();
@@ -47,7 +46,7 @@ namespace CoreImageGallery.Services
         {
             await InitializeBlobStorageAsync();
 
-            fileName = _imagePrefix + fileName;
+            fileName = ImagePrefix + fileName;
             var imageBlob = _container.GetBlockBlobReference(fileName);
             await imageBlob.UploadFromStreamAsync(stream);
 
@@ -66,7 +65,7 @@ namespace CoreImageGallery.Services
 
             var imageList = new List<Image>();
             var token = new BlobContinuationToken();
-            var blobList = await _container.ListBlobsSegmentedAsync("", true, BlobListingDetails.All, 100, token, null, null);
+            var blobList = await _container.ListBlobsSegmentedAsync(ImagePrefix, true, BlobListingDetails.All, 100, token, null, null);
             
             foreach (var blob in blobList.Results)
             {
