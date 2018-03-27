@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CoreImageGallery.Models;
+using CoreImageGallery.Primes;
 using CoreImageGallery.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,7 @@ namespace CoreImageGallery.Pages
         private const string UploadSuccessParameter = "uploadSuccess";
         public IEnumerable<Image> Images;
         public bool UploadSuccess = false;
+        public MinMaxPair MinMax;
 
         private IStorageService _storageService;
 
@@ -32,6 +34,8 @@ namespace CoreImageGallery.Pages
             {
                 this.UploadSuccess = true;
             }
+
+            this.MinMax = PrimeCalc.GetPrimes(0, 10000);
         }
 
         public async Task<IActionResult> OnPostAsync(IFormFile file)

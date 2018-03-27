@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27428.2015
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreImageGallery", "CoreImageGallery\CoreImageGallery.csproj", "{6C7DCB4A-F81E-4B18-92C7-FBB67B2AEBB9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreImageGallery", "CoreImageGallery\CoreImageGallery.csproj", "{6C7DCB4A-F81E-4B18-92C7-FBB67B2AEBB9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrimeAPI", "PrimeAPI\PrimeAPI.csproj", "{73721027-6E10-483B-9B01-EE0F98231112}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{6C7DCB4A-F81E-4B18-92C7-FBB67B2AEBB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C7DCB4A-F81E-4B18-92C7-FBB67B2AEBB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6C7DCB4A-F81E-4B18-92C7-FBB67B2AEBB9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73721027-6E10-483B-9B01-EE0F98231112}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73721027-6E10-483B-9B01-EE0F98231112}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73721027-6E10-483B-9B01-EE0F98231112}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73721027-6E10-483B-9B01-EE0F98231112}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
