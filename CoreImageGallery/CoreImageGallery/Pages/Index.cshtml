@@ -1,47 +1,49 @@
 ﻿@page
-@model IndexModel
-@{
-    ViewData["Title"] = "Home page";
-}
-
-<section class="jumbotron text-center">
-    <div class="container">
-        <div class="row">
-            <h1 class="modal-header col-sm-12">Album example</h1>
-        </div>
-        <div class="row">
-            <p class="lead text-muted">Something short and leading about the collection below—its contents, the creator, etc.</p>
-        </div>
-        @using (Html.BeginForm("Upload", "Home", FormMethod.Post, new { enctype = "multipart/form-data", id = "form" }))
-        {
-            <p>
-                <label class="btn btn-primary">
-                    Add image <input class="btn btn-primary" name="file" type="file" id="file" style="display: none;">
-                </label>
-            </p>
+    @model IndexModel
+        @{
+            ViewData["Title"] = "Home page";
         }
-    </div>
-</section>
 
-<div class="album text-muted">
-    @if (Model.UploadSuccess)
-    {
-        <div class="row">
-            <div class="col-sm-1">File successfully uploaded</div>
-        </div>
-    }
-    <div class="container">
-        <div class="row">
-            @foreach (var image in Model.Images)
+        <section class="jumbotron text-center">
+            <div class="container">
+                <div class="row">
+                    <h1 class="modal-header col-sm-12">Album example</h1>
+                </div>
+                <div class="row">
+                    <p class="lead text-muted">Something short and leading about the collection below—its contents, the creator, etc.</p>
+                </div>
+                @using (Html.BeginForm("Upload", "Home", FormMethod.Post, new { enctype = "multipart/form-data", id = "form" }))
+                {
+                    <p>
+                        <label class="btn btn-primary">
+                            Add image <input class="btn btn-primary" name="file" type="file" id="file" style="display: none;">
+                        </label>
+                    </p>
+                }
+            </div>
+        </section>
+
+        <div class="album text-muted">
+            @if (Model.UploadSuccess)
             {
-                <div class="card">
-                    <img class="lazy" src="@image.ImagePath" />
+                <div class="row">
+                    <div class="col-sm-1">File successfully uploaded</div>
                 </div>
             }
+            <div class="container">
+                <div class="row">
+                    @foreach (var image in Model.Images)
+                    {
+                        <div class="card">
+                            <img class="lazy" src="@image.ImagePath" />
+                        </div>
+                    }
+                </div>
+            </div>
         </div>
-    </div>
-</div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.7/jquery.lazy.min.js" integrity="sha256-sSF4G6GdnMRF5ZKZOLYGcPvU0BTvmPMFaQ6025ZB+Nk=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.7/plugins/jquery.lazy.ajax.min.js" integrity="sha256-uQvfHo7VKZFNpuEmueDtC1/4i21aJiaG38ubIskMSF0=" crossorigin="anonymous"></script>
-<script src="~/Scripts/site.js"></script>
+
+        @section Scripts{
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.7/jquery.lazy.min.js" integrity="sha256-sSF4G6GdnMRF5ZKZOLYGcPvU0BTvmPMFaQ6025ZB+Nk=" crossorigin="anonymous"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.7/plugins/jquery.lazy.ajax.min.js" integrity="sha256-uQvfHo7VKZFNpuEmueDtC1/4i21aJiaG38ubIskMSF0=" crossorigin="anonymous"></script>
+        }
