@@ -5,25 +5,23 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using PrimeAPI.Primes;
+using Primes.Lib;
 
 namespace PrimeAPI.Controllers
 {
     [Route("api/[controller]")]
     public class PrimesController : Controller
     {
-        
-
         // GET: api/Primes
         [HttpGet]
-        public string Get(long min, long max, int num)
+        public async Task<PrimeSummary> Get(long min, long max, long num)
         {
+            var primeCalc = new PrimeCalc();
+            var summary = await primeCalc.CalcPrimesForTime(min, max, num);
 
-
-            return "";
+            return summary;
         }
 
-       
     }
 
 }

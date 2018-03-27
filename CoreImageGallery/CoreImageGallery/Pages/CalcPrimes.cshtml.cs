@@ -3,21 +3,31 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text;
 using System.Threading.Tasks;
-using CoreImageGallery.Primes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using Primes.Lib;
 
 namespace CoreImageGallery.Pages
 {
     public class CalcPrimesModel : PageModel
     {
-        ConcurrentBag<MinMaxPair> _primes = new ConcurrentBag<MinMaxPair>();
-
         [BindProperty]
         public int NumberOfSeconds { get; set; }
         public PrimeSummary Summary { get; set; } = null;
+
+        string _apiURL = null;
+
+        public CalcPrimesModel(IConfiguration config)
+        {
+            _apiURL = config["PrimeAPIUrl"];
+        }
 
         public void OnGet()
         {
@@ -29,35 +39,29 @@ namespace CoreImageGallery.Pages
             const int min = 0;
             const int max = 100000;
 
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            int targetMilliseconds = this.NumberOfSeconds * 1000;
-
-            while (stopwatch.ElapsedMilliseconds < targetMilliseconds)
+            if (_apiURL == null)
             {
-                var t1 = Task.Run(() => CalcPrimes(min, max));
-                var t2 = Task.Run(() => CalcPrimes(min, max));
-                await Task.WhenAll(new Task[] { t1, t2 });
+                var primeCalc = new PrimeCalc();
+                this.Summary = await primeCalc.CalcPrimesForTime(min, max, this.NumberOfSeconds);
             }
-
-            stopwatch.Stop();
-
-            this.Summary = new PrimeSummary
+            else
             {
-                TotalCalcs = _primes.Count,
-                ElapsedSeconds = stopwatch.ElapsedMilliseconds / 1000
-            };
+                this.Summary = await GetPrimesAsync(_apiURL, min, max, this.NumberOfSeconds);
+            }
         }
 
-        private void CalcPrimes(long min, long max)
+        private static async Task<PrimeSummary> GetPrimesAsync(string baseUrl, long min, long max, long time)
         {
-            var numbers = PrimeCalc.GetPrimes(min, max);
-            _primes.Add(numbers);
+            var url = baseUrl + $"/api/primes?min={min}&max={max}&num={time}";
+            var req = WebRequest.Create(url);
+
+            var resp = await req.GetResponseAsync() as HttpWebResponse;
+            var str = new StreamReader(resp.GetResponseStream(), Encoding.GetEncoding(resp.CharacterSet));
+            var json = await str.ReadToEndAsync();
+            var summary = JsonConvert.DeserializeObject<PrimeSummary>(json);
+            return summary;
         }
+
     }
 
-    public class PrimeSummary
-    {
-        public int TotalCalcs { get; set; }
-        public long ElapsedSeconds { get; set; }
-    }
 }

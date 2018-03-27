@@ -22,4 +22,7 @@
   <ItemGroup>
     <Folder Include="Properties\PublishProfiles\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Primes.Lib\Primes.Lib.csproj" />
+  </ItemGroup>
 </Project>

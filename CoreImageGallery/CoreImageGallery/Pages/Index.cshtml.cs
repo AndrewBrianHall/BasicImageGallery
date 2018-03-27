@@ -4,11 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CoreImageGallery.Models;
-using CoreImageGallery.Primes;
 using CoreImageGallery.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Primes.Lib;
 
 namespace CoreImageGallery.Pages
 {

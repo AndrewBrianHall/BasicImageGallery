@@ -20,34 +20,24 @@ namespace CoreImageGallery.Services
         private readonly CloudStorageAccount _account;
         private readonly CloudBlobClient _client;
         private readonly string _connectionString;
-        private CloudBlobContainer _container;
+        private CloudBlobContainer _uploadContainer;
+        private CloudBlobContainer _publicContainer;
 
         public AzStorageService(IConfiguration config)
         {
             _connectionString = config["AzureStorageConnectionString"];
             _account = CloudStorageAccount.Parse(_connectionString);
             _client = _account.CreateCloudBlobClient();
-            _container = _client.GetContainerReference("images");
-        }
-
-        public async Task InitializeBlobStorageAsync()
-        {
-            await _container.CreateIfNotExistsAsync();
-
-            var permissions = await _container.GetPermissionsAsync();
-            if (permissions.PublicAccess == BlobContainerPublicAccessType.Off || permissions.PublicAccess == BlobContainerPublicAccessType.Unknown)
-            {
-                // If blob isn't public, we can't directly link to the pictures
-                await _container.SetPermissionsAsync(new BlobContainerPermissions() { PublicAccess = BlobContainerPublicAccessType.Blob });
-            }
+            _uploadContainer = _client.GetContainerReference("images");
+            _publicContainer = _client.GetContainerReference("images-watermarked");
         }
 
         public async Task<Image> AddImageAsync(Stream stream, string fileName)
         {
-            await InitializeBlobStorageAsync();
+            await _uploadContainer.CreateIfNotExistsAsync();
 
             fileName = ImagePrefix + fileName;
-            var imageBlob = _container.GetBlockBlobReference(fileName);
+            var imageBlob = _uploadContainer.GetBlockBlobReference(fileName);
             await imageBlob.UploadFromStreamAsync(stream);
 
             return new Image()
@@ -57,13 +47,25 @@ namespace CoreImageGallery.Services
             };
         }
 
+        public async Task InitializeBlobStorageAsync()
+        {
+            await _publicContainer.CreateIfNotExistsAsync();
+
+            var permissions = await _publicContainer.GetPermissionsAsync();
+            if (permissions.PublicAccess == BlobContainerPublicAccessType.Off || permissions.PublicAccess == BlobContainerPublicAccessType.Unknown)
+            {
+                // If blob isn't public, we can't directly link to the pictures
+                await _publicContainer.SetPermissionsAsync(new BlobContainerPermissions() { PublicAccess = BlobContainerPublicAccessType.Blob });
+            }
+        }
+
         public async Task<IEnumerable<Image>> GetImagesAsync()
         {
             await InitializeBlobStorageAsync();
 
             var imageList = new List<Image>();
             var token = new BlobContinuationToken();
-            var blobList = await _container.ListBlobsSegmentedAsync(ImagePrefix, true, BlobListingDetails.All, 100, token, null, null);
+            var blobList = await _publicContainer.ListBlobsSegmentedAsync(ImagePrefix, true, BlobListingDetails.All, 100, token, null, null);
             
             foreach (var blob in blobList.Results)
             {

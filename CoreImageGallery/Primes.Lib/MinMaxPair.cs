@@ -1,4 +1,4 @@
-﻿namespace CoreImageGallery.Primes
+﻿namespace Primes.Lib
 {
     public class MinMaxPair
     {
