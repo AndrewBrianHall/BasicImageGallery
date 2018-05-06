@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <UserSecretsId>aspnet-CoreImageGallery-CBB3EB3C-93B7-4518-81AD-A2D9C79C64B0</UserSecretsId>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Properties\PublishProfiles\CoreImageGallery - Web Deploy.pubxml" />
