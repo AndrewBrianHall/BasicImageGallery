@@ -76,16 +76,20 @@ body {
     background-color: #f7f7f7;
 }
 
-.card {
-    float: left;
+div.card {
+    display: inline-block;
     width: 33.333%;
-    padding: .75rem;
-    margin-bottom: 2rem;
+    margin-bottom: 3px;
+    margin-left: 3px;
     border: 0;
+    max-height: 300px;
+    max-width: 300px;
 }
 
-.card > img {
-    margin-bottom: .75rem;
+
+a.card > img {
+    height: 300px;
+    width: 300px
 }
 
 .card-text {
@@ -97,14 +101,14 @@ footer {
     padding-bottom: 3rem;
 }
 
-footer p {
-    margin-bottom: .25rem;
-}
+    footer p {
+        margin-bottom: .25rem;
+    }
 
-div.success-text{
+div.success-text {
     font-size: 18px;
 }
 
-div.centered{
+div.centered {
     text-align: center;
 }

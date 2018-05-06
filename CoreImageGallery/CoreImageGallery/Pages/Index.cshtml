@@ -14,7 +14,9 @@
             @foreach (var image in Model.Images)
             {
                 <div class="card">
-                    <img class="lazy" src="@image.ImagePath" />
+                    <a class="card" href="@image.ImagePath">
+                        <img class="lazy" src="@image.ImagePath" />
+                    </a>
                 </div>
             }
         </div>
