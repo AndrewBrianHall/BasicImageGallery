@@ -1,22 +1,14 @@
 ﻿@page
-@inject SignInManager<ApplicationUser> SignInManager
-@inject UserManager<ApplicationUser> UserManager
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Image Gallery";
 }
 
-<div class="row">
-    <h1 class="modal-header col-sm-12">Photo Album</h1>
+<div class="centered">
+    <h1 class="modal-header">Image Gallery</h1>
 </div>
 
 <div class="album text-muted">
-    @if (Model.UploadSuccess)
-    {
-        <div class="row">
-            <div class="col-sm-1">File successfully uploaded</div>
-        </div>
-    }
     <div class="container">
         <div class="row">
             @foreach (var image in Model.Images)
@@ -33,4 +25,5 @@
 @section Scripts{
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.7/jquery.lazy.min.js" integrity="sha256-sSF4G6GdnMRF5ZKZOLYGcPvU0BTvmPMFaQ6025ZB+Nk=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.7/plugins/jquery.lazy.ajax.min.js" integrity="sha256-uQvfHo7VKZFNpuEmueDtC1/4i21aJiaG38ubIskMSF0=" crossorigin="anonymous"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
 }

@@ -53,7 +53,7 @@ namespace Watermarker
 
             try
             {
-                var message = "Copyright (c) Andrew and Phillip";
+                var message = "CoreImageGallery";
                 WriteWatermark(message, inputBlob, outputBlob);
             }
             catch (Exception e)
