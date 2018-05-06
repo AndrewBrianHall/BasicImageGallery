@@ -8,7 +8,6 @@ using CoreImageGallery.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Primes.Lib;
 
 namespace CoreImageGallery.Pages
 {
@@ -17,7 +16,6 @@ namespace CoreImageGallery.Pages
         private const string UploadSuccessParameter = "uploadSuccess";
         public IEnumerable<Image> Images;
         public bool UploadSuccess = false;
-        public MinMaxPair MinMax;
 
         private IStorageService _storageService;
 
@@ -34,8 +32,6 @@ namespace CoreImageGallery.Pages
             {
                 this.UploadSuccess = true;
             }
-
-            this.MinMax = PrimeCalc.GetPrimes(0, 10000);
         }
 
         public async Task<IActionResult> OnPostAsync(IFormFile file)
@@ -43,7 +39,10 @@ namespace CoreImageGallery.Pages
             var fileName = Path.GetFileName(file.FileName);
             await _storageService.AddImageAsync(file.OpenReadStream(), fileName);
 
-            return RedirectToPage("Index", new { value = UploadSuccessParameter });
+            DateTime now = DateTime.Now;
+            var base64Time = Base64Encoder.GetBase64String($"{now.ToShortDateString()} {now.ToShortTimeString()}");
+            var base64File = Base64Encoder.GetBase64String(fileName);
+            return RedirectToPage("UploadSuccess", new { file = base64File, time = base64Time });
         }
     }
 }

@@ -1,0 +1,24 @@
+﻿@page
+@model CoreImageGallery.Pages.UploadSuccessModel
+@{
+    ViewData["Title"] = "UploadSuccess";
+}
+
+<h2>Upload recieved</h2>
+<h3>
+    File is processing, it will be available shortly
+</h3>
+
+<div class="row">
+    <div class="col-md-2 success-text">File</div>
+    <div class="col-md-3 success-text">@Model.FileName</div>
+</div>
+<div class="row">
+    <div class="col-md-2 success-text">Recieved</div>
+    <div class="col-md-3 success-text">@Model.Time</div>
+</div>
+
+<br /><br />
+<a class="btn btn-primary" href="/Index">Return to Gallery</a>
+
+
