@@ -1,20 +1,17 @@
-using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
 
 namespace Watermarker
 {
-    public static class Watermarker
+    public class ImageMarker
     {
-        private static void WriteWatermark(string watermarkContent, Stream originalImage, Stream newImage)
+        public static void WriteWatermark(string watermarkContent, Stream originalImageStrm, Stream newImageStrm)
         {
-            originalImage.Position = 0;
+            originalImageStrm.Position = 0;
 
-            using (Image inputImage = Image.FromStream(originalImage, true))
+            using (Image inputImage = Image.FromStream(originalImageStrm, true))
             using (Graphics graphic = Graphics.FromImage(inputImage))
             {
                 Font font = new Font("Georgia", 12, FontStyle.Bold);
@@ -38,27 +35,14 @@ namespace Watermarker
 
                 SolidBrush semiTransBrush = new SolidBrush(Color.FromArgb(153, 255, 255, 255));
                 graphic.DrawString(watermarkContent, font, semiTransBrush, xCenterOfImg, yPosFromBottom, StrFormat);
-
                 graphic.Flush();
-                inputImage.Save(newImage, ImageFormat.Jpeg);
-            }
-        }
 
-        [FunctionName("Watermarker")]
-        public static void Run([BlobTrigger("images/{name}")]Stream inputBlob,
-                               [Blob("images-watermarked/{name}", FileAccess.Write)] Stream outputBlob,
-                               string name, TraceWriter log)
-        {
-            log.Info($"C# Blob trigger function Processed blob\n Name:{name} \n Size: {inputBlob.Length} Bytes");
-
-            try
-            {
-                var message = "CoreImageGallery";
-                WriteWatermark(message, inputBlob, outputBlob);
-            }
-            catch (Exception e)
-            {
-                log.Info($"Watermarking failed: {e.Message}");
+                //Saving the image contents directly into the output stream doesn't work in V2 functions
+                //workaround is to write to a memory stream first and copy to the output stream
+                Stream tempStrm = new MemoryStream();
+                inputImage.Save(tempStrm, inputImage.RawFormat);
+                tempStrm.Seek(0, SeekOrigin.Begin);
+                tempStrm.CopyTo(newImageStrm);
             }
         }
     }
