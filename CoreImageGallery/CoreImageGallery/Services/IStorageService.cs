@@ -9,6 +9,6 @@ namespace CoreImageGallery.Services
     public interface IStorageService
     {
         Task<IEnumerable<Image>> GetImagesAsync();
-        Task<Image> AddImageAsync(Stream stream, string fileName);
+        Task<Image> AddImageAsync(Stream stream, string fileName, string userName);
     }
 }
