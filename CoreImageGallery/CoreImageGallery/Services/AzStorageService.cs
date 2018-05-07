@@ -32,19 +32,25 @@ namespace CoreImageGallery.Services
             _publicContainer = _client.GetContainerReference("images-watermarked");
         }
 
-        public async Task<Image> AddImageAsync(Stream stream, string fileName)
+        public async Task<Image> AddImageAsync(Stream stream, string fileName, string userName)
         {
             await _uploadContainer.CreateIfNotExistsAsync();
 
             fileName = ImagePrefix + fileName;
             var imageBlob = _uploadContainer.GetBlockBlobReference(fileName);
             await imageBlob.UploadFromStreamAsync(stream);
+            await RecordUploadAsync(fileName, userName);
 
             return new Image()
             {
                 FileName = fileName,
                 ImagePath = imageBlob.Uri.ToString()
             };
+        }
+
+        private async Task RecordUploadAsync(string file, string userId)
+        {
+
         }
 
         public async Task InitializeBlobStorageAsync()
