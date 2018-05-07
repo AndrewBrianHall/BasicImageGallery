@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreImageGallery", "CoreIma
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageGallery.AzFunctions", "ImageGallery.AzFunctions\ImageGallery.AzFunctions.csproj", "{13DD8B78-1BCA-45D6-98A3-7773BE9864C9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageGallery.Model", "ImageGallery.Model\ImageGallery.Model.csproj", "{A2F2CEF2-6B19-464A-982E-D3857CD3A279}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{13DD8B78-1BCA-45D6-98A3-7773BE9864C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{13DD8B78-1BCA-45D6-98A3-7773BE9864C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{13DD8B78-1BCA-45D6-98A3-7773BE9864C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2F2CEF2-6B19-464A-982E-D3857CD3A279}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2F2CEF2-6B19-464A-982E-D3857CD3A279}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2F2CEF2-6B19-464A-982E-D3857CD3A279}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2F2CEF2-6B19-464A-982E-D3857CD3A279}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
