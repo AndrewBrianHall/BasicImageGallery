@@ -23,9 +23,9 @@ namespace Watermarker
             {
                 UploadedImage current = images.Where(i => i.FileName == name).ToList().FirstOrDefault();
                 string uploadUser = current.UploadUser;
-                if (uploadUser.Length > 10)
+                if (uploadUser.Length > 32)
                 {
-                    uploadUser.Substring(0, 10);
+                    uploadUser = uploadUser.Substring(0, 10);
                 }
 
                 string waterMark = $"(c) {uploadUser}";
