@@ -42,14 +42,14 @@ namespace CoreImageGallery.Services
             _cosmosClient = new DocumentClient(new Uri(_cosmosEndpointUrl), _cosmosPrimaryKey);
         }
 
-        public async Task<Image> AddImageAsync(Stream stream, string fileName, string userName)
+        public async Task<UploadedImage> AddImageAsync(Stream stream, string fileName, string userName)
         {
             await _uploadContainer.CreateIfNotExistsAsync();
 
             fileName = ImagePrefix + fileName;
             var imageBlob = _uploadContainer.GetBlockBlobReference(fileName);
             await imageBlob.UploadFromStreamAsync(stream);
-            var img = new Image
+            var img = new UploadedImage
             {
                 FileName = fileName,
                 ImagePath = imageBlob.Uri.ToString(),
@@ -63,7 +63,7 @@ namespace CoreImageGallery.Services
 
         }
 
-        private async Task RecordUploadAsync(Image img)
+        private async Task RecordUploadAsync(UploadedImage img)
         {
             //persist this image with upload audit details to db
             await this._cosmosClient.CreateDocumentAsync(
@@ -98,17 +98,17 @@ namespace CoreImageGallery.Services
                 new RequestOptions { OfferThroughput = 2500 });
         }
 
-        public async Task<IEnumerable<Image>> GetImagesAsync()
+        public async Task<IEnumerable<UploadedImage>> GetImagesAsync()
         {
             await InitializeResourcesAsync();
 
-            var imageList = new List<Image>();
+            var imageList = new List<UploadedImage>();
             var token = new BlobContinuationToken();
             var blobList = await _publicContainer.ListBlobsSegmentedAsync(ImagePrefix, true, BlobListingDetails.All, 100, token, null, null);
             
             foreach (var blob in blobList.Results)
             {
-                var image = new Image
+                var image = new UploadedImage
                 {
                     ImagePath = blob.Uri.ToString()
                 };

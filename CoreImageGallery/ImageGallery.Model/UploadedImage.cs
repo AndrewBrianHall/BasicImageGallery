@@ -2,7 +2,7 @@
 
 namespace ImageGallery.Models
 {
-    public class Image
+    public class UploadedImage
     {
         public string FileName { get; set; }
         public string ImagePath { get; set; }

@@ -15,7 +15,7 @@ namespace CoreImageGallery.Pages
     public class IndexModel : PageModel
     {
         private const string UploadSuccessParameter = "uploadSuccess";
-        public IEnumerable<Image> Images;
+        public IEnumerable<UploadedImage> Images;
         public bool UploadSuccess = false;
 
         private IStorageService _storageService;
