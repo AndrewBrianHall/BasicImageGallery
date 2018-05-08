@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using CoreImageGallery.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
@@ -13,7 +12,7 @@ using Newtonsoft.Json;
 using System.Net;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
-using Newtonsoft.Json;
+using ImageGallery.Models;
 
 namespace CoreImageGallery.Services
 {
