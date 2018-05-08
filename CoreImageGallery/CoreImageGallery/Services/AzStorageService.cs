@@ -44,12 +44,13 @@ namespace CoreImageGallery.Services
             _cosmosClient = new DocumentClient(new Uri(_cosmosEndpointUrl), _cosmosPrimaryKey);
         }
 
-        public async Task<UploadedImage> AddImageAsync(Stream stream, string userName)
+        public async Task<UploadedImage> AddImageAsync(Stream stream, string originalName, string userName)
         {
             await InitializeResourcesAsync();
 
             string uploadId = Guid.NewGuid().ToString();
-            string fileName = ImagePrefix + uploadId;
+            string fileExtension = originalName.Substring(originalName.LastIndexOf('.'));
+            string fileName = ImagePrefix + uploadId + fileExtension;
             var imageBlob = _uploadContainer.GetBlockBlobReference(fileName);
             await imageBlob.UploadFromStreamAsync(stream);
             var img = new UploadedImage
@@ -58,7 +59,7 @@ namespace CoreImageGallery.Services
                 FileName = fileName,
                 ImagePath = imageBlob.Uri.ToString(),
                 UploadTime = DateTime.Now,
-                UploadUser = userName
+                UploadUser = userName.GetHashCode().ToString()
             };
 
             await RecordUploadAsync(img);

@@ -43,7 +43,7 @@ namespace CoreImageGallery.Pages
             var base64File = Base64Encoder.GetBase64String(fileName);
             var user = User.Identities.FirstOrDefault();
 
-            await _storageService.AddImageAsync(file.OpenReadStream(), user.Name);
+            await _storageService.AddImageAsync(file.OpenReadStream(), fileName, user.Name);
 
             return RedirectToPage("UploadSuccess", new { file = base64File, time = base64Time });
         }
