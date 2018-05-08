@@ -19,6 +19,8 @@ namespace CoreImageGallery.Services
 {
     public class AzStorageService : IStorageService
     {
+        private static bool ResourcesInitialized { get; set; } = false;
+
         private const string ImagePrefix = "img_";
         private readonly CloudStorageAccount _account;
         private readonly CloudBlobClient _client;
@@ -42,15 +44,17 @@ namespace CoreImageGallery.Services
             _cosmosClient = new DocumentClient(new Uri(_cosmosEndpointUrl), _cosmosPrimaryKey);
         }
 
-        public async Task<UploadedImage> AddImageAsync(Stream stream, string fileName, string userName)
+        public async Task<UploadedImage> AddImageAsync(Stream stream, string userName)
         {
-            await _uploadContainer.CreateIfNotExistsAsync();
+            await InitializeResourcesAsync();
 
-            fileName = ImagePrefix + fileName;
+            string uploadId = Guid.NewGuid().ToString();
+            string fileName = ImagePrefix + uploadId;
             var imageBlob = _uploadContainer.GetBlockBlobReference(fileName);
             await imageBlob.UploadFromStreamAsync(stream);
             var img = new UploadedImage
             {
+                Id = uploadId,
                 FileName = fileName,
                 ImagePath = imageBlob.Uri.ToString(),
                 UploadTime = DateTime.Now,
@@ -77,27 +81,35 @@ namespace CoreImageGallery.Services
 
         public async Task InitializeResourcesAsync()
         {
-            //first Azure Storage resources
-            await _publicContainer.CreateIfNotExistsAsync();
-
-            var permissions = await _publicContainer.GetPermissionsAsync();
-            if (permissions.PublicAccess == BlobContainerPublicAccessType.Off || permissions.PublicAccess == BlobContainerPublicAccessType.Unknown)
+            if (!ResourcesInitialized)
             {
-                // If blob isn't public, we can't directly link to the pictures
-                await _publicContainer.SetPermissionsAsync(new BlobContainerPermissions() { PublicAccess = BlobContainerPublicAccessType.Blob });
+                //first Azure Storage resources
+                await _publicContainer.CreateIfNotExistsAsync();
+
+                await _uploadContainer.CreateIfNotExistsAsync();
+
+                var permissions = await _publicContainer.GetPermissionsAsync();
+                if (permissions.PublicAccess == BlobContainerPublicAccessType.Off || permissions.PublicAccess == BlobContainerPublicAccessType.Unknown)
+                {
+                    // If blob isn't public, we can't directly link to the pictures
+                    await _publicContainer.SetPermissionsAsync(new BlobContainerPermissions() { PublicAccess = BlobContainerPublicAccessType.Blob });
+                }
+
+                //next Azure CosmosDb resources
+                await _cosmosClient.CreateDatabaseIfNotExistsAsync(new Database { Id = Config.DatabaseId });
+
+                DocumentCollection myCollection = new DocumentCollection();
+                myCollection.Id = Config.CollectionId;
+                myCollection.PartitionKey.Paths.Add(Config.DeviceId);
+
+                await _cosmosClient.CreateDocumentCollectionIfNotExistsAsync(
+                    UriFactory.CreateDatabaseUri(Config.DatabaseId),
+                    myCollection,
+                    new RequestOptions { OfferThroughput = 2500 });
+
+                ResourcesInitialized = true;
             }
 
-            //next Azure CosmosDb resources
-            await _cosmosClient.CreateDatabaseIfNotExistsAsync(new Database { Id = Config.DatabaseId });
-
-            DocumentCollection myCollection = new DocumentCollection();
-            myCollection.Id = Config.CollectionId;
-            myCollection.PartitionKey.Paths.Add(Config.DeviceId);
-
-            await _cosmosClient.CreateDocumentCollectionIfNotExistsAsync(
-                UriFactory.CreateDatabaseUri(Config.DatabaseId),
-                myCollection,
-                new RequestOptions { OfferThroughput = 2500 });
         }
 
         public async Task<IEnumerable<UploadedImage>> GetImagesAsync()
