@@ -5,7 +5,7 @@ using System.IO;
 
 namespace Watermarker
 {
-    public class ImageMarker
+    public class WaterMarker
     {
         public static void WriteWatermark(string watermarkContent, Stream originalImageStrm, Stream newImageStrm)
         {

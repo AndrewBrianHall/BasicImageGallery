@@ -29,7 +29,7 @@ namespace Watermarker
                 }
 
                 string waterMark = $"(c) {uploadUser}";
-                ImageMarker.WriteWatermark(waterMark, inputBlob, outputBlob);
+                WaterMarker.WriteWatermark(waterMark, inputBlob, outputBlob);
                 log.Info($"C# Blob trigger function Processed blob\n Name:{name} \n Size: {inputBlob.Length} Bytes");
             }
             catch(Exception e)
