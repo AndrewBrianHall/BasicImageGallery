@@ -51,15 +51,18 @@ namespace CoreImageGallery.Services
             string uploadId = Guid.NewGuid().ToString();
             string fileExtension = originalName.Substring(originalName.LastIndexOf('.'));
             string fileName = ImagePrefix + uploadId + fileExtension;
+            string userHash = userName.GetHashCode().ToString();
+
             var imageBlob = _uploadContainer.GetBlockBlobReference(fileName);
             await imageBlob.UploadFromStreamAsync(stream);
+
             var img = new UploadedImage
             {
                 Id = uploadId,
                 FileName = fileName,
                 ImagePath = imageBlob.Uri.ToString(),
                 UploadTime = DateTime.Now,
-                UploadUser = userName.GetHashCode().ToString()
+                UploadUser = userHash
             };
 
             await RecordUploadAsync(img);
