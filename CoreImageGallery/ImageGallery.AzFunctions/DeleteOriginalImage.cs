@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using ImageGallery.Model;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.WindowsAzure.Storage;
@@ -14,11 +15,11 @@ namespace ImageGallery.AzFunctions
 
         [FunctionName("DeleteOriginalImage")]
         public static async Task Run([BlobTrigger(Config.WatermarkedContainer + "/{name}", 
-            Connection = Config.StorageConnectionStringName)]Stream myBlob, 
+            Connection = "AzureWebJobsStorage")]Stream myBlob, 
             string name, 
             TraceWriter log)
         {
-            string connectionString = Environment.GetEnvironmentVariable(Config.StorageConnectionStringName, EnvironmentVariableTarget.Process);
+            string connectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage", EnvironmentVariableTarget.Process);
             CloudStorageAccount account = CloudStorageAccount.Parse(connectionString);
             CloudBlobClient client = account.CreateCloudBlobClient();
             CloudBlobContainer uploadContainer = client.GetContainerReference(Config.UploadContainer);

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using ImageGallery.Model;
 using ImageGallery.Models;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
@@ -14,7 +15,7 @@ namespace Watermarker
         [FunctionName("Watermarker")]
         public static void Run([BlobTrigger("images/{name}")]Stream inputBlob,
                                [Blob("images-watermarked/{name}", FileAccess.Write)] Stream outputBlob,
-                               [CosmosDB("images", "coll", ConnectionStringSetting = "CosmosConnection")] IEnumerable<UploadedImage> images,
+                               [CosmosDB(Config.DatabaseId, Config.CollectionId, ConnectionStringSetting = "CosmosConnection")] IEnumerable<UploadedImage> images,
                                string name,
                                TraceWriter log)
         {
