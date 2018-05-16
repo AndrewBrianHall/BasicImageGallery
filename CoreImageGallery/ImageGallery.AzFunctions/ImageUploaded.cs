@@ -6,30 +6,23 @@ using ImageGallery.Model;
 using ImageGallery.Models;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
+using Microsoft.Azure.ApiHub;
 
 namespace Watermarker
 {
     public static class ImageUploaded
     {
+        const string WaterMarkText = "(c) CoreImageGallery";
 
         [FunctionName("ImageUploaded")]
         public static void Run([BlobTrigger(Config.UploadContainer + "/{name}")]Stream inputBlob,
                                [Blob(Config.WatermarkedContainer + "/{name}", FileAccess.Write)] Stream outputBlob,
-                               [CosmosDB(Config.DatabaseId, Config.CollectionId, ConnectionStringSetting = "CosmosConnection")] IEnumerable<UploadedImage> images,
                                string name,
                                TraceWriter log)
         {
             try
             {
-                UploadedImage current = images.Where(i => i.FileName == name).ToList().FirstOrDefault();
-                string uploadUser = current.UserHash;
-                if (uploadUser.Length > 32)
-                {
-                    uploadUser = uploadUser.Substring(0, 10);
-                }
-
-                string waterMark = $"(c) {uploadUser}";
-                WaterMarker.WriteWatermark(waterMark, inputBlob, outputBlob);
+                WaterMarker.WriteWatermark(WaterMarkText, inputBlob, outputBlob);
                 log.Info($"C# Blob trigger function Processed blob\n Name:{name} \n Size: {inputBlob.Length} Bytes");
             }
             catch(Exception e)

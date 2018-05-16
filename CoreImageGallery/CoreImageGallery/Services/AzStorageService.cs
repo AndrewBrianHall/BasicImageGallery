@@ -49,7 +49,7 @@ namespace CoreImageGallery.Services
             string uploadId = Guid.NewGuid().ToString();
             string fileExtension = originalName.Substring(originalName.LastIndexOf('.'));
             string fileName = ImagePrefix + uploadId + fileExtension;
-            string userHash = userName;//.GetHashCode().ToString();
+            string userHash = userName.GetHashCode().ToString();
 
             var imageBlob = _uploadContainer.GetBlockBlobReference(fileName);
             await imageBlob.UploadFromStreamAsync(stream);
@@ -67,7 +67,6 @@ namespace CoreImageGallery.Services
             await _dbContext.SaveChangesAsync();
 
             return img;
-
         }
 
 
