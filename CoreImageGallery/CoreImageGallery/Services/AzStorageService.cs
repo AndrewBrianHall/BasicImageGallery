@@ -76,7 +76,6 @@ namespace CoreImageGallery.Services
             {
                 //first Azure Storage resources
                 await _publicContainer.CreateIfNotExistsAsync();
-
                 await _uploadContainer.CreateIfNotExistsAsync();
 
                 var permissions = await _publicContainer.GetPermissionsAsync();
