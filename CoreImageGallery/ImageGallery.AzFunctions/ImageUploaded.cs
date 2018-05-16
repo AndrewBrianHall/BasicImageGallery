@@ -6,7 +6,6 @@ using ImageGallery.Model;
 using ImageGallery.Models;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
-using Microsoft.Azure.ApiHub;
 
 namespace Watermarker
 {
