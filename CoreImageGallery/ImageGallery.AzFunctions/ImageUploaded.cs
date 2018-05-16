@@ -22,7 +22,7 @@ namespace Watermarker
             try
             {
                 UploadedImage current = images.Where(i => i.FileName == name).ToList().FirstOrDefault();
-                string uploadUser = current.UploadUser;
+                string uploadUser = current.UserHash;
                 if (uploadUser.Length > 32)
                 {
                     uploadUser = uploadUser.Substring(0, 10);

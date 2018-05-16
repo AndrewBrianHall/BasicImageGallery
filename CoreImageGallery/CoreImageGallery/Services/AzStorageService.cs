@@ -14,6 +14,7 @@ using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using ImageGallery.Models;
 using ImageGallery.Model;
+using CoreImageGallery.Data;
 
 namespace CoreImageGallery.Services
 {
@@ -28,20 +29,17 @@ namespace CoreImageGallery.Services
         private CloudBlobContainer _uploadContainer;
         private CloudBlobContainer _publicContainer;
 
-        private string _cosmosEndpointUrl;
-        private string _cosmosPrimaryKey;
-        private DocumentClient _cosmosClient;
+        private ApplicationDbContext _dbContext;
 
-        public AzStorageService(IConfiguration config)
+        public AzStorageService(IConfiguration config, ApplicationDbContext dbContext)
         {
             _connectionString = config["AzureStorageConnectionString"];
             _account = CloudStorageAccount.Parse(_connectionString);
             _client = _account.CreateCloudBlobClient();
             _uploadContainer = _client.GetContainerReference(Config.UploadContainer);
             _publicContainer = _client.GetContainerReference(Config.WatermarkedContainer);
-            _cosmosEndpointUrl = config["CosmosConnectionString"];
-            _cosmosPrimaryKey = config["CosmosPrimaryKey"];
-            _cosmosClient = new DocumentClient(new Uri(_cosmosEndpointUrl), _cosmosPrimaryKey);
+
+            _dbContext = dbContext;
         }
 
         public async Task<UploadedImage> AddImageAsync(Stream stream, string originalName, string userName)
@@ -51,7 +49,7 @@ namespace CoreImageGallery.Services
             string uploadId = Guid.NewGuid().ToString();
             string fileExtension = originalName.Substring(originalName.LastIndexOf('.'));
             string fileName = ImagePrefix + uploadId + fileExtension;
-            string userHash = userName.GetHashCode().ToString();
+            string userHash = userName;//.GetHashCode().ToString();
 
             var imageBlob = _uploadContainer.GetBlockBlobReference(fileName);
             await imageBlob.UploadFromStreamAsync(stream);
@@ -62,23 +60,13 @@ namespace CoreImageGallery.Services
                 FileName = fileName,
                 ImagePath = imageBlob.Uri.ToString(),
                 UploadTime = DateTime.Now,
-                UploadUser = userHash
+                UserHash = userHash
             };
 
-            await RecordUploadAsync(img);
+            await _dbContext.Images.AddAsync(img);
+            await _dbContext.SaveChangesAsync();
 
             return img;
-
-        }
-
-        private async Task RecordUploadAsync(UploadedImage img)
-        {
-            //persist this image with upload audit details to db
-
-
-            await this._cosmosClient.CreateDocumentAsync(
-                    UriFactory.CreateDocumentCollectionUri(Config.DatabaseId, Config.CollectionId), img);
-
 
         }
 
@@ -98,18 +86,6 @@ namespace CoreImageGallery.Services
                     // If blob isn't public, we can't directly link to the pictures
                     await _publicContainer.SetPermissionsAsync(new BlobContainerPermissions() { PublicAccess = BlobContainerPublicAccessType.Blob });
                 }
-
-                //next Azure CosmosDb resources
-                await _cosmosClient.CreateDatabaseIfNotExistsAsync(new Database { Id = Config.DatabaseId });
-
-                DocumentCollection myCollection = new DocumentCollection();
-                myCollection.Id = Config.CollectionId;
-                myCollection.PartitionKey.Paths.Add(Config.DeviceId);
-
-                await _cosmosClient.CreateDocumentCollectionIfNotExistsAsync(
-                    UriFactory.CreateDatabaseUri(Config.DatabaseId),
-                    myCollection,
-                    new RequestOptions { OfferThroughput = 2500 });
 
                 ResourcesInitialized = true;
             }
