@@ -1,0 +1,26 @@
+﻿@page
+@model CoreImageGallery.Pages.UploadModel
+@{
+    ViewData["Title"] = "Upload";
+}
+
+<h2>Choose file</h2>
+
+@using (Html.BeginForm("Upload", "Home", FormMethod.Post, new { enctype = "multipart/form-data", id = "form" }))
+{
+    <label class="btn btn-link navbar-btn navbar-link" id="btnUpload">
+        <input class="btn btn-primary" name="file" type="file" id="file" style="display: none;">
+    </label>
+}
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $("#file").on('change', function () {
+                $("#form").submit();
+            });
+            $("#btnUpload").trigger("click");
+        });
+    </script>
+}
+

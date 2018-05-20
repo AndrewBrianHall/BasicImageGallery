@@ -6,12 +6,4 @@
 @if (SignInManager.IsSignedIn(User))
 {
 }
-<li>
-    @using (Html.BeginForm("Upload", "Home", FormMethod.Post, new { enctype = "multipart/form-data", id = "form" }))
-    {
-        <label class="btn btn-link navbar-btn navbar-link">
-            Upload Image
-            <input class="btn btn-primary" name="file" type="file" id="file" style="display: none;">
-        </label>
-    }
-</li>
+<li><a asp-page="/Upload">Upload Image</a></li>

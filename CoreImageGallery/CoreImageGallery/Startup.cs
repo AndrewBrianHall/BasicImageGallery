@@ -38,6 +38,7 @@ namespace CoreImageGallery
                 {
                     options.Conventions.AuthorizeFolder("/Account/Manage");
                     options.Conventions.AuthorizePage("/Account/Logout");
+                    //options.Conventions.AuthorizePage("/Upload");
                 });
 
             services.AddScoped<IStorageService, AzStorageService>();

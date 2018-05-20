@@ -47,9 +47,8 @@ namespace CoreImageGallery.Services
             await InitializeResourcesAsync();
 
             string uploadId = Guid.NewGuid().ToString();
-            string fileExtension = originalName.Substring(originalName.LastIndexOf('.'));
+            string fileExtension = Path.GetExtension(originalName);
             string fileName = ImagePrefix + uploadId + fileExtension;
-            string userHash = userName.GetHashCode().ToString();
 
             var imageBlob = _uploadContainer.GetBlockBlobReference(fileName);
             await imageBlob.UploadFromStreamAsync(stream);
@@ -60,7 +59,7 @@ namespace CoreImageGallery.Services
                 FileName = fileName,
                 ImagePath = imageBlob.Uri.ToString(),
                 UploadTime = DateTime.Now,
-                UserHash = userHash
+                UserHash = userName
             };
 
             await _dbContext.Images.AddAsync(img);
