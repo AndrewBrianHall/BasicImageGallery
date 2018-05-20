@@ -29,9 +29,9 @@ namespace CoreImageGallery.Services
         private CloudBlobContainer _uploadContainer;
         private CloudBlobContainer _publicContainer;
 
-        private ImageGalleryDataContext _dbContext;
+        private ApplicationDbContext _dbContext;
 
-        public AzStorageService(IConfiguration config, ImageGalleryDataContext dbContext)
+        public AzStorageService(IConfiguration config, ApplicationDbContext dbContext)
         {
             _connectionString = config["AzureStorageConnectionString"];
             _account = CloudStorageAccount.Parse(_connectionString);
