@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 using System.Net;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
-using ImageGallery.Models;
+using ImageGallery.Model;
 using ImageGallery.Model;
 using CoreImageGallery.Data;
 
@@ -29,9 +29,9 @@ namespace CoreImageGallery.Services
         private CloudBlobContainer _uploadContainer;
         private CloudBlobContainer _publicContainer;
 
-        private ApplicationDbContext _dbContext;
+        private ImageGalleryDataContext _dbContext;
 
-        public AzStorageService(IConfiguration config, ApplicationDbContext dbContext)
+        public AzStorageService(IConfiguration config, ImageGalleryDataContext dbContext)
         {
             _connectionString = config["AzureStorageConnectionString"];
             _account = CloudStorageAccount.Parse(_connectionString);

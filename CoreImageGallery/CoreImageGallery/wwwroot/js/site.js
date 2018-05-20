@@ -1,7 +1,4 @@
 ﻿$(document).ready(function () {
-    $("#file").on('change', function () {
-        $("#form").submit();
-    });
     $('.lazy').Lazy({
         scrollDirection: 'vertical',
         effect: 'fadeIn',
