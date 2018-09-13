@@ -17,8 +17,8 @@ namespace Watermarker
                 Font font = new Font("Georgia", 12, FontStyle.Bold);
                 SizeF textSize = graphic.MeasureString(watermarkContent, font);
 
-                float xCenterOfImg = (inputImage.Width / 2);
-                float yPosFromBottom = (int)(inputImage.Height * 0.90) - (textSize.Height / 2);
+                float xPostFromLeft = textSize.Width/2 + 10;
+                float yPosFromBottom = (int)(inputImage.Height) - (textSize.Height) - 10;
 
                 graphic.SmoothingMode = SmoothingMode.HighQuality;
                 graphic.InterpolationMode = InterpolationMode.HighQualityBicubic;
@@ -31,10 +31,10 @@ namespace Watermarker
                 };
 
                 SolidBrush semiTransBrush2 = new SolidBrush(Color.FromArgb(153, 0, 0, 0));
-                graphic.DrawString(watermarkContent, font, semiTransBrush2, xCenterOfImg + 1, yPosFromBottom + 1, StrFormat);
+                graphic.DrawString(watermarkContent, font, semiTransBrush2, xPostFromLeft + 1, yPosFromBottom + 1, StrFormat);
 
                 SolidBrush semiTransBrush = new SolidBrush(Color.FromArgb(153, 255, 255, 255));
-                graphic.DrawString(watermarkContent, font, semiTransBrush, xCenterOfImg, yPosFromBottom, StrFormat);
+                graphic.DrawString(watermarkContent, font, semiTransBrush, xPostFromLeft, yPosFromBottom, StrFormat);
                 graphic.Flush();
 
                 //Saving the image contents directly into the output stream doesn't work in V2 functions
