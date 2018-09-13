@@ -21,7 +21,7 @@ namespace CoreImageGallery.Services
         }
         public async Task AddImageAsync(Stream stream, string originalName, string userName)
         {
-            UploadUtilities.GetImageProperties(originalName, out string uploadId, out string fileName);
+            UploadUtilities.GetImageProperties(originalName, userName, out string uploadId, out string fileName, out string userId);
 
             string localPath = Path.Combine(ImageFolder, fileName);
             string imageUri = ImageFolderUri + "/" + fileName;
@@ -32,13 +32,13 @@ namespace CoreImageGallery.Services
                 await stream.CopyToAsync(fileStream);
             }
 
-            await UploadUtilities.RecordImageUploadedAsync(_dbContext, uploadId, fileName, imageUri);
+            await UploadUtilities.RecordImageUploadedAsync(_dbContext, uploadId, fileName, imageUri, userId);
         }
 
         public async Task<IEnumerable<UploadedImage>> GetImagesAsync()
         {
             var imageList = new List<UploadedImage>();
-            var files = Directory.EnumerateFiles(ImageFolder);
+            var files = await Task.Run(() => Directory.EnumerateFiles(ImageFolder));
 
             foreach(var file in files)
             {

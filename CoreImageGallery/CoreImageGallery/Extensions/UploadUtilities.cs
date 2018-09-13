@@ -12,11 +12,12 @@ namespace CoreImageGallery.Extensions
     {
         private const string ImagePrefix = "img_";
 
-        public static void GetImageProperties(string originalName, out string uploadId, out string fileName)
+        public static void GetImageProperties(string originalName, string userName, out string uploadId, out string fileName, out string userHash)
         {
             uploadId = Guid.NewGuid().ToString();
             string fileExtension = Path.GetExtension(originalName);
             fileName = ImagePrefix + uploadId + fileExtension;
+            userHash = userName.GetHashCode().ToString();
         }
 
         public static async Task RecordImageUploadedAsync(ApplicationDbContext dbContext, string uploadId, string fileName, string imageUri, string userHash = null)
