@@ -47,7 +47,7 @@ namespace CoreImageGallery.Services
             await InitializeResourcesAsync();
 
             string uploadId = Guid.NewGuid().ToString();
-            string fileExtension = originalName.Substring(originalName.LastIndexOf('.'));
+            string fileExtension = Path.GetExtension(originalName);
             string fileName = ImagePrefix + uploadId + fileExtension;
             string userHash = userName.GetHashCode().ToString();
 

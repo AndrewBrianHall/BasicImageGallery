@@ -23,6 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\PublishProfiles\" />
+    <Folder Include="wwwroot\userImages\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ImageGallery.Model\ImageGallery.Model.csproj" />
