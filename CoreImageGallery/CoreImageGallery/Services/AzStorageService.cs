@@ -54,17 +54,7 @@ namespace CoreImageGallery.Services
             var imageBlob = _uploadContainer.GetBlockBlobReference(fileName);
             await imageBlob.UploadFromStreamAsync(stream);
 
-            var img = new UploadedImage
-            {
-                Id = uploadId,
-                FileName = fileName,
-                ImagePath = imageBlob.Uri.ToString(),
-                UploadTime = DateTime.Now,
-                UserHash = userHash
-            };
-
-            await _dbContext.Images.AddAsync(img);
-            await _dbContext.SaveChangesAsync();
+            var img = await _dbContext.RecordImageUploadedAsync(uploadId, fileName, imageBlob.Uri.ToString(), userHash);
 
             return img;
         }

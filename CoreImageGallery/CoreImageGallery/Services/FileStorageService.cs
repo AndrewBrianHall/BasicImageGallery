@@ -26,6 +26,7 @@ namespace CoreImageGallery.Services
             string fileName = ImagePrefix + uploadId + fileExtension;
             //string userHash = userName.GetHashCode().ToString();
             string localPath = Path.Combine(ImageFolder, fileName);
+            string imageUri = ImageFolderUri + "/" + fileName;
 
             using(var fileStream = File.Create(localPath))
             {
@@ -33,17 +34,7 @@ namespace CoreImageGallery.Services
                 await stream.CopyToAsync(fileStream);
             }
 
-            var img = new UploadedImage
-            {
-                Id = uploadId,
-                FileName = fileName,
-                ImagePath = ImageFolderUri + "/" + fileName,
-                UploadTime = DateTime.Now,
-                UserHash = null
-            };
-
-            //await _dbContext.Images.AddAsync(img);
-            //await _dbContext.SaveChangesAsync();
+            var img = await _dbContext.RecordImageUploadedAsync(uploadId, fileName, imageUri);
 
             return img;
         }

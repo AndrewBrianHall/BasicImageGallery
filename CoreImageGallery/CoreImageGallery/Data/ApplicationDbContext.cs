@@ -24,5 +24,22 @@ namespace CoreImageGallery.Data
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
         }
+
+        public async Task<UploadedImage> RecordImageUploadedAsync(string uploadId, string fileName, string imageUri, string userHash = null)
+        {
+            var img = new UploadedImage
+            {
+                Id = uploadId,
+                FileName = fileName,
+                ImagePath = imageUri,
+                UploadTime = DateTime.Now,
+                UserHash = userHash
+            };
+
+            await Images.AddAsync(img);
+            await SaveChangesAsync();
+
+            return img;
+        }
     }
 }
