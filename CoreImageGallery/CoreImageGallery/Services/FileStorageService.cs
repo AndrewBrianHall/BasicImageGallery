@@ -1,4 +1,5 @@
 ﻿using CoreImageGallery.Data;
+using CoreImageGallery.Extensions;
 using ImageGallery.Models;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,6 @@ namespace CoreImageGallery.Services
 {
     public class FileStorageService : IStorageService
     {
-        private const string ImagePrefix = "img_";
         private const string ImageFolderUri = "userImages";
         private const string ImageFolder = "wwwroot\\" + ImageFolderUri;
         private ApplicationDbContext _dbContext;
@@ -19,24 +19,20 @@ namespace CoreImageGallery.Services
         {
             _dbContext = null;
         }
-        public async Task<UploadedImage> AddImageAsync(Stream stream, string originalName, string userName)
+        public async Task AddImageAsync(Stream stream, string originalName, string userName)
         {
-            string uploadId = Guid.NewGuid().ToString();
-            string fileExtension = Path.GetExtension(originalName);
-            string fileName = ImagePrefix + uploadId + fileExtension;
-            //string userHash = userName.GetHashCode().ToString();
+            UploadUtilities.GetImageProperties(originalName, out string uploadId, out string fileName);
+
             string localPath = Path.Combine(ImageFolder, fileName);
             string imageUri = ImageFolderUri + "/" + fileName;
 
-            using(var fileStream = File.Create(localPath))
+            using (var fileStream = File.Create(localPath))
             {
                 stream.Seek(0, SeekOrigin.Begin);
                 await stream.CopyToAsync(fileStream);
             }
 
-            var img = await _dbContext.RecordImageUploadedAsync(uploadId, fileName, imageUri);
-
-            return img;
+            await UploadUtilities.RecordImageUploadedAsync(_dbContext, uploadId, fileName, imageUri);
         }
 
         public async Task<IEnumerable<UploadedImage>> GetImagesAsync()

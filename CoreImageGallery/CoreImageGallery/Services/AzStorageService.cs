@@ -15,6 +15,7 @@ using Microsoft.Azure.Documents.Client;
 using ImageGallery.Models;
 using ImageGallery.Model;
 using CoreImageGallery.Data;
+using CoreImageGallery.Extensions;
 
 namespace CoreImageGallery.Services
 {
@@ -33,7 +34,7 @@ namespace CoreImageGallery.Services
 
         public AzStorageService(IConfiguration config, ApplicationDbContext dbContext)
         {
-            _connectionString = config["AzureStorageConnectionString"];
+            _connectionString = config["AzureStorageConnection"];
             _account = CloudStorageAccount.Parse(_connectionString);
             _client = _account.CreateCloudBlobClient();
             _uploadContainer = _client.GetContainerReference(Config.UploadContainer);
@@ -42,21 +43,17 @@ namespace CoreImageGallery.Services
             _dbContext = dbContext;
         }
 
-        public async Task<UploadedImage> AddImageAsync(Stream stream, string originalName, string userName)
+        public async Task AddImageAsync(Stream stream, string originalName, string userName)
         {
             await InitializeResourcesAsync();
 
-            string uploadId = Guid.NewGuid().ToString();
-            string fileExtension = Path.GetExtension(originalName);
-            string fileName = ImagePrefix + uploadId + fileExtension;
+            UploadUtilities.GetImageProperties(originalName, out string uploadId, out string fileName);
             string userHash = userName.GetHashCode().ToString();
 
             var imageBlob = _uploadContainer.GetBlockBlobReference(fileName);
             await imageBlob.UploadFromStreamAsync(stream);
 
-            var img = await _dbContext.RecordImageUploadedAsync(uploadId, fileName, imageBlob.Uri.ToString(), userHash);
-
-            return img;
+            await UploadUtilities.RecordImageUploadedAsync(_dbContext, uploadId, fileName, imageBlob.Uri.ToString(), userHash);
         }
 
 
