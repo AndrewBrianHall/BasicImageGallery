@@ -6,6 +6,7 @@ namespace ImageGallery.Model
 {
     public class Config
     {
+        public const string WaterMarkText = "(c) CoreImageGallery";
         public const string CollectionId = "uploads";
         public const string DatabaseId = "ImageGallery";
         public const string UploadContainer = "images";
