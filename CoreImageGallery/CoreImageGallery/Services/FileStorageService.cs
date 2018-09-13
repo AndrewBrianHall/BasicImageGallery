@@ -17,7 +17,7 @@ namespace CoreImageGallery.Services
 
         public FileStorageService(ApplicationDbContext dbContext)
         {
-            _dbContext = null;
+            _dbContext = dbContext;
         }
         public async Task AddImageAsync(Stream stream, string originalName, string userName)
         {
@@ -38,9 +38,9 @@ namespace CoreImageGallery.Services
         public async Task<IEnumerable<UploadedImage>> GetImagesAsync()
         {
             var imageList = new List<UploadedImage>();
-            var files = Directory.EnumerateFiles(ImageFolder);
+            var files = await Task.Run(() => Directory.EnumerateFiles(ImageFolder));
 
-            foreach(var file in files)
+            foreach (var file in files)
             {
                 var image = new UploadedImage
                 {
