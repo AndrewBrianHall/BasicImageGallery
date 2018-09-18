@@ -40,8 +40,8 @@ namespace CoreImageGallery
                     options.Conventions.AuthorizePage("/Account/Logout");
                 });
 
-            services.AddScoped<IStorageService, AzStorageService>();
-            //services.AddScoped<IStorageService, FileStorageService>();
+            services.AddScoped<IStorageService, FileStorageService>();
+            //services.AddScoped<IStorageService, AzStorageService>();
 
             // Register no-op EmailSender used by account confirmation and password reset during development
             // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=532713
@@ -53,7 +53,6 @@ namespace CoreImageGallery
         {
             if (env.IsDevelopment())
             {
-                app.UseBrowserLink();
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
             }
