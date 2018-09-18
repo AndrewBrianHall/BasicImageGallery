@@ -4,14 +4,10 @@
     <UserSecretsId>aspnet-CoreImageGallery-CBB3EB3C-93B7-4518-81AD-A2D9C79C64B0</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="Properties\PublishProfiles\CoreImageGallery - Web Deploy.pubxml" />
-    <None Remove="Properties\PublishProfiles\CoreImageGallery20180326075733 - Web Deploy.pubxml" />
-    <None Remove="Properties\PublishProfiles\CoreImageGallery20180326075733-Slot2 - FTP.pubxml" />
-    <None Remove="Properties\PublishProfiles\CoreImageGallery20180326075733-Slot2 - Web Deploy.pubxml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.6" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.3" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.*" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.4" PrivateAssets="All" />
     <PackageReference Include="WindowsAzure.Storage" Version="9.1.0" />
   </ItemGroup>
   <ItemGroup>
