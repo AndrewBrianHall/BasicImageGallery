@@ -19,7 +19,7 @@ namespace CoreImageGallery.Extensions
             fileName = ImagePrefix + uploadId + fileExtension;
         }
 
-        public static async Task RecordImageUploadedAsync(ApplicationDbContext dbContext, string uploadId, string fileName, string imageUri, string userHash = null)
+        public static async Task<UploadedImage> RecordImageUploadedAsync(ApplicationDbContext dbContext, string uploadId, string fileName, string imageUri, string userHash = null)
         {
             var img = new UploadedImage
             {
@@ -32,6 +32,8 @@ namespace CoreImageGallery.Extensions
 
             await dbContext.Images.AddAsync(img);
             await dbContext.SaveChangesAsync();
+
+            return img;
         }
     }
 }
