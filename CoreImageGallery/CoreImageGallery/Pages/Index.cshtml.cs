@@ -9,6 +9,7 @@ using ImageGallery.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Watermarker;
 
 namespace CoreImageGallery.Pages
 {
@@ -43,7 +44,11 @@ namespace CoreImageGallery.Pages
             var base64File = Base64Encoder.GetBase64String(fileName);
             var user = User.Identities.FirstOrDefault();
 
-            await _storageService.AddImageAsync(file.OpenReadStream(), fileName, user.Name);
+            MemoryStream watermarkedImage = new MemoryStream();
+            Stream originalImageStrm = file.OpenReadStream();
+            WaterMarker.WriteWatermark(originalImageStrm, watermarkedImage);
+
+            await _storageService.AddImageAsync(watermarkedImage, fileName, user.Name);
 
             return RedirectToPage("UploadSuccess", new { file = base64File, time = base64Time });
         }

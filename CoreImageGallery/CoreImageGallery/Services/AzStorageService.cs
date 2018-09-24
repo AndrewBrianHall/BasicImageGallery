@@ -8,6 +8,7 @@ using ImageGallery.Models;
 using ImageGallery.Model;
 using CoreImageGallery.Data;
 using CoreImageGallery.Extensions;
+using Watermarker;
 
 namespace CoreImageGallery.Services
 {
@@ -42,7 +43,7 @@ namespace CoreImageGallery.Services
             UploadUtilities.GetImageProperties(originalName, out string uploadId, out string fileName);
             string userHash = userName.GetHashCode().ToString();
 
-            var imageBlob = _uploadContainer.GetBlockBlobReference(fileName);
+            var imageBlob = _publicContainer.GetBlockBlobReference(fileName);
             await imageBlob.UploadFromStreamAsync(stream);
 
             await UploadUtilities.RecordImageUploadedAsync(_dbContext, uploadId, fileName, imageBlob.Uri.ToString(), userHash);
