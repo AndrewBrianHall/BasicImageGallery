@@ -13,9 +13,9 @@ namespace Watermarker
 
         public static void WriteWatermark(Stream originalImageStrm, Stream newImageStrm)
         {
-            var delay = 250;
+            var delay = new Random().Next(150,250);
             Stopwatch stopwatch = Stopwatch.StartNew();
-            while(stopwatch.ElapsedMilliseconds < delay)
+            do
             {
                 originalImageStrm.Position = 0;
 
@@ -52,8 +52,8 @@ namespace Watermarker
                     tempStrm.Seek(0, SeekOrigin.Begin);
                     tempStrm.CopyTo(newImageStrm);
                     newImageStrm.Seek(0, SeekOrigin.Begin);
-                }
-            }
+                } 
+            } while (stopwatch.ElapsedMilliseconds < delay);
         }
     }
 }
