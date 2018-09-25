@@ -11,8 +11,8 @@ namespace Watermarker
         const string WaterMarkText = "(c) CoreImageGallery";
 
         [FunctionName("ImageUploaded")]
-        public static void Run([BlobTrigger(Config.UploadContainer + "/{name}")]Stream inputBlob,
-                               [Blob(Config.WatermarkedContainer + "/{name}", FileAccess.Write)] Stream outputBlob,
+        public static void Run([BlobTrigger("images/{name}")]Stream inputBlob,
+                               [Blob("images-watermarked/{name}", FileAccess.Write)] Stream outputBlob,
                                string name,
                                TraceWriter log)
         {
