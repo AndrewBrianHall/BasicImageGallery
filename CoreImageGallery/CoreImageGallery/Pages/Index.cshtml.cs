@@ -38,15 +38,15 @@ namespace CoreImageGallery.Pages
 
         public async Task<IActionResult> OnPostAsync(IFormFile file)
         {
-            var fileName = Path.GetFileName(file.FileName);
+            string fileName = Path.GetFileName(file.FileName);
             DateTime now = DateTime.Now;
-            var base64Time = Base64Encoder.GetBase64String($"{now.ToShortDateString()} {now.ToShortTimeString()}");
-            var base64File = Base64Encoder.GetBase64String(fileName);
-            var user = User.Identities.FirstOrDefault();
+            string base64Time = Base64Encoder.GetBase64String($"{now.ToShortDateString()} {now.ToShortTimeString()}");
+            string base64File = Base64Encoder.GetBase64String(fileName);
+            ClaimsIdentity user = this.User.Identities.FirstOrDefault();
 
             MemoryStream watermarkedImage = new MemoryStream();
             Stream originalImageStrm = file.OpenReadStream();
-            WaterMarker.WriteWatermark(originalImageStrm, watermarkedImage, this.User.ToString());
+            WaterMarker.WriteWatermark(originalImageStrm, watermarkedImage, user.Name);
 
             await _storageService.AddImageAsync(watermarkedImage, fileName, user.Name);
 
