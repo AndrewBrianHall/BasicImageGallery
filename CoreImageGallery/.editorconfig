@@ -18,7 +18,7 @@ charset = utf-8-bom
 dotnet_sort_system_directives_first = true 
 # this. preferences 
 dotnet_style_qualification_for_field = false:silent 
-dotnet_style_qualification_for_property = false:silent 
+dotnet_style_qualification_for_property = true:suggestion 
 dotnet_style_qualification_for_method = false:silent 
 dotnet_style_qualification_for_event = false:silent 
 # Language keywords vs BCL types preferences 
