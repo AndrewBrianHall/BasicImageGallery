@@ -9,10 +9,11 @@ namespace Watermarker
 {
     public class WaterMarker
     {
-        private const string WatermarkText = "(c) CoreImageGallery";
+        private const string WatermarkBaseText = "(c) CoreImageGallery-{0}";
 
-        public static void WriteWatermark(Stream originalImageStrm, Stream newImageStrm)
+        public static void WriteWatermark(Stream originalImageStrm, Stream newImageStrm, string userName)
         {
+            string WatermarkText = string.Format(WatermarkBaseText, userName.GetHashCode());
             var delay = new Random().Next(150,450);
             Stopwatch stopwatch = Stopwatch.StartNew();
             do

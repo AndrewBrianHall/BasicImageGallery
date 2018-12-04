@@ -46,7 +46,7 @@ namespace CoreImageGallery.Pages
 
             MemoryStream watermarkedImage = new MemoryStream();
             Stream originalImageStrm = file.OpenReadStream();
-            WaterMarker.WriteWatermark(originalImageStrm, watermarkedImage);
+            WaterMarker.WriteWatermark(originalImageStrm, watermarkedImage, this.User.ToString());
 
             await _storageService.AddImageAsync(watermarkedImage, fileName, user.Name);
 
