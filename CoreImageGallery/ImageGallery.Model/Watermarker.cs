@@ -13,7 +13,7 @@ namespace Watermarker
 
         public static void WriteWatermark(Stream originalImageStrm, Stream newImageStrm)
         {
-            var delay = new Random().Next(150,250);
+            var delay = new Random().Next(150,450);
             Stopwatch stopwatch = Stopwatch.StartNew();
             do
             {
