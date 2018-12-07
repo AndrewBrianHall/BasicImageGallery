@@ -1,0 +1,507 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "coreimagegalleryappinsightsName": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "coreimagegalleryappinsights"
+    },
+    "coreimagegalleryplanName": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "coreimagegalleryplan"
+    },
+    "coreimagegallerywebappName": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "coreimagegallerywebapp"
+    },
+    "coreimagegalleryfunctionsappName": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "coreimagegalleryfunctionsapp"
+    },
+    "coreimagegalleryplanSkuName": {
+      "type": "string",
+      "defaultValue": "S1",
+      "allowedValues": [
+        "F1",
+        "D1",
+        "B1",
+        "B2",
+        "B3",
+        "S1",
+        "S2",
+        "S3",
+        "P1",
+        "P2",
+        "P3",
+        "P4"
+      ],
+      "metadata": {
+        "description": "Describes plan's pricing tier and capacity. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
+      }
+    },
+    "coreimagegallerysqlserverAdminLoginUsername": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "dbadmin"
+    },
+    "coreimagegallerysqlserverAdminLoginPassword": {
+      "type": "securestring"
+    },
+    "coreimagegallerysqlserverName": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "coreimagegallerysqlserver"
+    },
+    "coreimagegallerysqldbName": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "coreimagegallerysqldb"
+    },
+    "coreimagegallerysqldbCollation": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "SQL_Latin1_General_CP1_CI_AS"
+    },
+    "coreimagegallerysqldbEdition": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "Standard",
+        "Premium"
+      ]
+    },
+    "coreimagegallerysqldbRequestedServiceObjectiveName": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "S0",
+        "S1",
+        "S2",
+        "P1",
+        "P2",
+        "P3"
+      ],
+      "metadata": {
+        "description": "Describes the performance level for Edition"
+      }
+    },
+    "coreimagegallerystorageName": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "storage"
+    },
+    "coreimagegallerystorageType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_ZRS",
+        "Standard_GRS",
+        "Standard_RAGRS",
+        "Premium_LRS"
+      ]
+    }
+  },
+  "variables": {
+    "coreimagegallerywebappName": "[concat(parameters('coreimagegallerywebappName'), '-', uniqueString(resourceGroup().id))]",
+    "coreimagegalleryfunctionsappName": "[concat(parameters('coreimagegalleryfunctionsappName'), '-', uniqueString(resourceGroup().id))]",
+    "coreimagegallerysqlserverName": "[concat(parameters('coreimagegallerysqlserverName'), '-', uniqueString(resourceGroup().id))]",
+    "coreimagegallerystorageName": "[concat(parameters('coreimagegallerystorageName'), uniqueString(resourceGroup().id))]"
+  },
+  "resources": [
+    {
+      "name": "coreimagegalleryappinsights",
+      "type": "Microsoft.Insights/components",
+      "location": "East US",
+      "apiVersion": "2014-04-01",
+      "dependsOn": [
+      ],
+      "tags": {
+        "displayName": "coreimagegalleryappinsights",
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('coreimagegallerywebappName'))]": "Resource"
+      },
+      "properties": {
+        "applicationId": "[parameters('coreimagegalleryappinsightsName')]"
+      }
+    },
+    {
+      "name": "[variables('coreimagegallerystorageName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-01-01",
+      "sku": {
+        "name": "[parameters('coreimagegallerystorageType')]"
+      },
+      "dependsOn": [],
+      "tags": {
+        "displayName": "coreimagegallerystorage"
+      },
+      "kind": "Storage"
+    },
+    {
+      "name": "[parameters('coreimagegalleryplanName')]",
+      "type": "Microsoft.Web/serverfarms",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-08-01",
+      "sku": {
+        "name": "[parameters('coreimagegalleryplanSkuName')]"
+      },
+      "dependsOn": [],
+      "tags": {
+        "displayName": "coreimagegalleryplan"
+      },
+      "properties": {
+        "name": "[parameters('coreimagegalleryplanName')]",
+        "numberOfWorkers": 1
+      }
+    },
+    {
+      "name": "[variables('coreimagegallerywebappName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-08-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('coreimagegalleryplanName'))]",
+        "[resourceId('microsoft.insights/components/', parameters('coreimagegalleryappinsightsName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceId('Microsoft.Web/serverfarms', parameters('coreimagegalleryplanName')))]": "Resource",
+        "displayName": "coreimagegallerywebapp"
+      },
+      "properties": {
+        "name": "[variables('coreimagegallerywebappName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('coreimagegalleryplanName'))]"
+      },
+      "resources": [
+        {
+          "name": "appsettings",
+          "type": "config",
+          "apiVersion": "2015-08-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('coreimagegallerywebappName'))]"
+          ],
+          "tags": {
+            "displayName": "appsettings"
+          },
+          "properties": {
+            "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', parameters('coreimagegalleryappinsightsName'))).InstrumentationKey]",
+            "AzureStorageConnection": "[Concat('DefaultEndpointsProtocol=https;AccountName=',variables('coreimagegallerystorageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('coreimagegallerystorageName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]",
+            "ApplicationInsightsAgent_EXTENSION_VERSION": "~2",
+            "XDT_MicrosoftApplicationInsights_Mode": "recommended",
+            "APPINSIGHTS_PROFILERFEATURE_VERSION": "1.0.0",
+            "DiagnosticServices_EXTENSION_VERSION": "~3",
+            "APPINSIGHTS_SNAPSHOTFEATURE_VERSION": "1.0.0",
+            "SnapshotDebugger_EXTENSION_VERSION": "~1",
+            "InstrumentationEngine_EXTENSION_VERSION": "~1",
+            "XDT_MicrosoftApplicationInsights_BaseExtensions": "disabled"
+          }
+        }
+      ]
+    },
+    {
+      "name": "[variables('coreimagegalleryfunctionsappName')]",
+      "type": "Microsoft.Web/sites",
+      "dependsOn": [
+        "[resourceId('microsoft.insights/components/', parameters('coreimagegalleryappinsightsName'))]"
+      ],
+      "tags": {
+        "displayName": "coreimagegalleryfunctionsapp"
+      },
+      "properties": {
+        "siteConfig": {
+          "appSettings": [
+            {
+              "name": "FUNCTIONS_WORKER_RUNTIME",
+              "value": "dotnet"
+            },
+            {
+              "name": "AzureWebJobsStorage",
+              "value": "[Concat('DefaultEndpointsProtocol=https;AccountName=',variables('coreimagegallerystorageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('coreimagegallerystorageName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]"
+            },
+            {
+              "name": "FUNCTIONS_EXTENSION_VERSION",
+              "value": "~2"
+            },
+            {
+              "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+              "value": "[Concat('DefaultEndpointsProtocol=https;AccountName=',variables('coreimagegallerystorageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('coreimagegallerystorageName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]"
+            },
+            {
+              "name": "WEBSITE_CONTENTSHARE",
+              "value": "[concat(toLower(variables('coreimagegalleryfunctionsappName')), 'b2b4')]"
+            },
+            {
+              "name": "WEBSITE_NODE_DEFAULT_VERSION",
+              "value": "8.11.1"
+            },
+            {
+              "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+              "value": "[reference(concat('microsoft.insights/components/', parameters('coreimagegalleryappinsightsName'))).InstrumentationKey]"
+            }
+          ]
+        },
+        "name": "[variables('coreimagegalleryfunctionsappName')]",
+        "clientAffinityEnabled": false,
+        "reserved": false
+      },
+      "apiVersion": "2016-03-01",
+      "location": "[resourceGroup().location]",
+      "kind": "functionapp"
+    },
+    {
+      "name": "[variables('coreimagegallerysqlserverName')]",
+      "type": "Microsoft.Sql/servers",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2014-04-01-preview",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "coreimagegallerysqlserver"
+      },
+      "properties": {
+        "administratorLogin": "[parameters('coreimagegallerysqlserverAdminLoginUsername')]",
+        "administratorLoginPassword": "[parameters('coreimagegallerysqlserverAdminLoginPassword')]"
+      },
+      "resources": [
+        {
+          "name": "AllowAllWindowsAzureIps",
+          "type": "firewallrules",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', variables('coreimagegallerysqlserverName'))]"
+          ],
+          "properties": {
+            "startIpAddress": "0.0.0.0",
+            "endIpAddress": "0.0.0.0"
+          }
+        },
+        {
+          "name": "[parameters('coreimagegallerysqldbName')]",
+          "type": "databases",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', variables('coreimagegallerysqlserverName'))]"
+          ],
+          "tags": {
+            "displayName": "coreimagegallerysqldb"
+          },
+          "properties": {
+            "collation": "[parameters('coreimagegallerysqldbCollation')]",
+            "edition": "[parameters('coreimagegallerysqldbEdition')]",
+            "maxSizeBytes": "1073741824",
+            "requestedServiceObjectiveName": "[parameters('coreimagegallerysqldbRequestedServiceObjectiveName')]"
+          }
+        }
+      ]
+    },
+    {
+      "name": "[concat(parameters('coreimagegalleryplanName'), '-', resourceGroup().name)]",
+      "type": "Microsoft.Insights/autoscalesettings",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2014-04-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('coreimagegalleryplanName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-link:', resourceId('Microsoft.Web/serverfarms', parameters('coreimagegalleryplanName')))]": "Resource",
+        "displayName": "coreimagegallerymonitoring AutoScale"
+      },
+      "properties": {
+        "name": "[concat(parameters('coreimagegalleryplanName'), '-', resourceGroup().name)]",
+        "profiles": [
+          {
+            "name": "Default",
+            "capacity": {
+              "minimum": 1,
+              "maximum": 2,
+              "default": 1
+            },
+            "rules": [
+              {
+                "metricTrigger": {
+                  "metricName": "CpuPercentage",
+                  "metricResourceUri": "[resourceId('Microsoft.Web/serverfarms', parameters('coreimagegalleryplanName'))]",
+                  "timeGrain": "PT1M",
+                  "statistic": "Average",
+                  "timeWindow": "PT10M",
+                  "timeAggregation": "Average",
+                  "operator": "GreaterThan",
+                  "threshold": 80
+                },
+                "scaleAction": {
+                  "direction": "Increase",
+                  "type": "ChangeCount",
+                  "value": 1,
+                  "cooldown": "PT10M"
+                }
+              },
+              {
+                "metricTrigger": {
+                  "metricName": "CpuPercentage",
+                  "metricResourceUri": "[resourceId('Microsoft.Web/serverfarms', parameters('coreimagegalleryplanName'))]",
+                  "timeGrain": "PT1M",
+                  "statistic": "Average",
+                  "timeWindow": "PT1H",
+                  "timeAggregation": "Average",
+                  "operator": "LessThan",
+                  "threshold": 60
+                },
+                "scaleAction": {
+                  "direction": "Decrease",
+                  "type": "ChangeCount",
+                  "value": 1,
+                  "cooldown": "PT1H"
+                }
+              }
+            ]
+          }
+        ],
+        "enabled": false,
+        "targetResourceUri": "[resourceId('Microsoft.Web/serverfarms', parameters('coreimagegalleryplanName'))]"
+      }
+    },
+    {
+      "name": "[concat('CPUHigh ', parameters('coreimagegalleryplanName'))]",
+      "type": "Microsoft.Insights/alertrules",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2014-04-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('coreimagegalleryplanName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-link:', resourceId('Microsoft.Web/serverfarms', parameters('coreimagegalleryplanName')))]": "Resource",
+        "displayName": "CPUHigh coreimagegallerymonitoring"
+      },
+      "properties": {
+        "name": "[concat('CPUHigh ', parameters('coreimagegalleryplanName'))]",
+        "description": "[concat('The average CPU is high across all the instances of ', parameters('coreimagegalleryplanName'))]",
+        "isEnabled": false,
+        "condition": {
+          "odata.type": "Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition",
+          "dataSource": {
+            "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource",
+            "resourceUri": "[resourceId('Microsoft.Web/serverfarms', parameters('coreimagegalleryplanName'))]",
+            "metricName": "CpuPercentage"
+          },
+          "operator": "GreaterThan",
+          "threshold": 90,
+          "windowSize": "PT15M"
+        },
+        "action": {
+          "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleEmailAction",
+          "sendToServiceOwners": true,
+          "customEmails": []
+        }
+      }
+    },
+    {
+      "name": "[concat('LongHttpQueue ', parameters('coreimagegalleryplanName'))]",
+      "type": "Microsoft.Insights/alertrules",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2014-04-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('coreimagegalleryplanName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-link:', resourceId('Microsoft.Web/serverfarms', parameters('coreimagegalleryplanName')))]": "Resource",
+        "displayName": "LongHttpQueue coreimagegallerymonitoring"
+      },
+      "properties": {
+        "name": "[concat('LongHttpQueue ', parameters('coreimagegalleryplanName'))]",
+        "description": "[concat('The HTTP queue for the instances of ', parameters('coreimagegalleryplanName'), ' has a large number of pending requests.')]",
+        "isEnabled": false,
+        "condition": {
+          "odata.type": "Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition",
+          "dataSource": {
+            "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource",
+            "resourceUri": "[resourceId('Microsoft.Web/serverfarms', parameters('coreimagegalleryplanName'))]",
+            "metricName": "HttpQueueLength"
+          },
+          "operator": "GreaterThan",
+          "threshold": 100,
+          "windowSize": "PT5M"
+        },
+        "action": {
+          "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleEmailAction",
+          "sendToServiceOwners": true,
+          "customEmails": []
+        }
+      }
+    },
+    {
+      "name": "[concat('ServerErrors ', 'coreimagegallerymonitoring')]",
+      "type": "Microsoft.Insights/alertrules",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2014-04-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', variables('coreimagegallerywebappName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-link:', resourceId('Microsoft.Web/sites', variables('coreimagegallerywebappName')))]": "Resource",
+        "displayName": "ServerErrors coreimagegallerymonitoring"
+      },
+      "properties": {
+        "name": "[concat('ServerErrors ', variables('coreimagegallerywebappName'))]",
+        "description": "[concat(variables('coreimagegallerywebappName'), ' has some server errors, status code 5xx.')]",
+        "isEnabled": false,
+        "condition": {
+          "odata.type": "Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition",
+          "dataSource": {
+            "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource",
+            "resourceUri": "[resourceId('Microsoft.Web/sites', variables('coreimagegallerywebappName'))]",
+            "metricName": "Http5xx"
+          },
+          "operator": "GreaterThan",
+          "threshold": 0,
+          "windowSize": "PT5M"
+        },
+        "action": {
+          "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleEmailAction",
+          "sendToServiceOwners": true,
+          "customEmails": []
+        }
+      }
+    },
+    {
+      "name": "[concat('ForbiddenRequests ', 'coreimagegallerymonitoring')]",
+      "type": "Microsoft.Insights/alertrules",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2014-04-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', variables('coreimagegallerywebappName'))]"
+      ],
+      "tags": {
+        "displayName": "ForbiddenRequests coreimagegallerymonitoring"
+      },
+      "properties": {
+        "name": "[concat('ForbiddenRequests ', variables('coreimagegallerywebappName'))]",
+        "description": "[concat(variables('coreimagegallerywebappName'), ' has some requests that are forbidden, status code 403.')]",
+        "isEnabled": false,
+        "condition": {
+          "odata.type": "Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition",
+          "dataSource": {
+            "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource",
+            "resourceUri": "[resourceId('Microsoft.Web/sites', variables('coreimagegallerywebappName'))]",
+            "metricName": "Http403"
+          },
+          "operator": "GreaterThan",
+          "threshold": 0,
+          "windowSize": "PT5M"
+        },
+        "action": {
+          "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleEmailAction",
+          "sendToServiceOwners": true,
+          "customEmails": []
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}
