@@ -4,4 +4,4 @@ az group deployment create \
   --name coreimagegallerydeployment \
   --resource-group $rgname \
   --template-file azuredeploy.json \
-  --parameters @azuredeploy-parameters.json
+  --parameters @azuredeploy.parameters.json
