@@ -1,4 +1,4 @@
-﻿rgname="coreimagegallery-"$(date +"%m_%d_%Y")
+rgname="coreimagegallery-"$(date +"%m_%d_%Y")
 az group create --name $rgname --location "East US"
 az group deployment create \
   --name coreimagegallerydeployment \
