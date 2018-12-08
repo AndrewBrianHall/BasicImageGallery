@@ -31,6 +31,9 @@
     },
     "coreimagegalleryfunctionsappName": {
       "value": "coreimagegalleryfunctionsapp"
+    },
+    "useuniquenamesuffixes": {
+      "value": "Enabled"
     }
   }
 }

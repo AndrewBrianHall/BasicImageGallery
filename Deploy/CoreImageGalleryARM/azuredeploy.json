@@ -66,6 +66,14 @@
       "minLength": 1,
       "defaultValue": "SQL_Latin1_General_CP1_CI_AS"
     },
+    "useuniquenamesuffixes": {
+      "type": "string",
+      "defaultValue": "Enabled",
+      "allowedValues": [
+        "Enabled",
+        "Disabled"
+      ]
+    },
     "coreimagegallerysqldbEdition": {
       "type": "string",
       "defaultValue": "Basic",
@@ -109,10 +117,10 @@
     }
   },
   "variables": {
-    "coreimagegallerywebappName": "[concat(parameters('coreimagegallerywebappName'), '-', uniqueString(resourceGroup().id))]",
-    "coreimagegalleryfunctionsappName": "[concat(parameters('coreimagegalleryfunctionsappName'), '-', uniqueString(resourceGroup().id))]",
-    "coreimagegallerysqlserverName": "[concat(parameters('coreimagegallerysqlserverName'), '-', uniqueString(resourceGroup().id))]",
-    "coreimagegallerystorageName": "[concat(parameters('coreimagegallerystorageName'), uniqueString(resourceGroup().id))]"
+    "coreimagegallerywebappName": "[if(equals(parameters('useuniquenamesuffixes'),'Enabled'), concat(parameters('coreimagegallerywebappName'),'-', uniqueString(resourceGroup().id)), parameters('coreimagegallerywebappName'))]",
+    "coreimagegalleryfunctionsappName": "[if(equals(parameters('useuniquenamesuffixes'),'Enabled'), concat(parameters('coreimagegalleryfunctionsappName'),'-', uniqueString(resourceGroup().id)), parameters('coreimagegalleryfunctionsappName'))]",
+    "coreimagegallerysqlserverName": "[if(equals(parameters('useuniquenamesuffixes'),'Enabled'), concat(parameters('coreimagegallerysqlserverName'),'-', uniqueString(resourceGroup().id)), parameters('coreimagegallerysqlserverName'))]",
+    "coreimagegallerystorageName": "[if(equals(parameters('useuniquenamesuffixes'),'Enabled'), concat(parameters('coreimagegallerystorageName'),uniqueString(resourceGroup().id)), parameters('coreimagegallerystorageName'))]"
   },
   "resources": [
     {
