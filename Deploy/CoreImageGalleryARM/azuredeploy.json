@@ -131,6 +131,53 @@
       }
     },
     {
+      "name": "[variables('coreimagegallerysqlserverName')]",
+      "type": "Microsoft.Sql/servers",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2014-04-01-preview",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "coreimagegallerysqlserver"
+      },
+      "properties": {
+        "administratorLogin": "[parameters('coreimagegallerysqlserverAdminLoginUsername')]",
+        "administratorLoginPassword": "[parameters('coreimagegallerysqlserverAdminLoginPassword')]"
+      },
+      "resources": [
+        {
+          "name": "AllowAllWindowsAzureIps",
+          "type": "firewallrules",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', variables('coreimagegallerysqlserverName'))]"
+          ],
+          "properties": {
+            "startIpAddress": "0.0.0.0",
+            "endIpAddress": "0.0.0.0"
+          }
+        },
+        {
+          "name": "[parameters('coreimagegallerysqldbName')]",
+          "type": "databases",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', variables('coreimagegallerysqlserverName'))]"
+          ],
+          "tags": {
+            "displayName": "coreimagegallerysqldb"
+          },
+          "properties": {
+            "collation": "[parameters('coreimagegallerysqldbCollation')]",
+            "edition": "[parameters('coreimagegallerysqldbEdition')]",
+            "maxSizeBytes": "1073741824",
+            "requestedServiceObjectiveName": "[parameters('coreimagegallerysqldbRequestedServiceObjectiveName')]"
+          }
+        }
+      ]
+    },
+    {
       "name": "[variables('coreimagegallerystorageName')]",
       "type": "Microsoft.Storage/storageAccounts",
       "location": "[resourceGroup().location]",
@@ -184,7 +231,7 @@
           "type": "config",
           "apiVersion": "2015-08-01",
           "dependsOn": [
-            "[resourceId('Microsoft.Web/sites', variables('coreimagegallerywebappName'))]"
+            "[resourceId('Microsoft.Web/sites', variables('coreimagegallerywebappName'))]",
           ],
           "tags": {
             "displayName": "appsettings"
@@ -200,6 +247,24 @@
             "SnapshotDebugger_EXTENSION_VERSION": "~1",
             "InstrumentationEngine_EXTENSION_VERSION": "~1",
             "XDT_MicrosoftApplicationInsights_BaseExtensions": "disabled"
+          }
+        },
+        {
+          "name": "connectionstrings",
+          "type": "config",
+          "apiVersion": "2015-08-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('coreimagegallerywebappName'))]",
+            "[resourceId('Microsoft.Sql/servers/databases', variables('coreimagegallerysqlserverName'), parameters('coreimagegallerysqldbName'))]"
+          ],
+          "tags": {
+            "hidden-related:/subscriptions/ca5ce512-88e1-44b1-97c6-22caf84fb2b0/resourceGroups/coreimagegallery-connect2018/providers/Microsoft.Web/serverfarms/CoreImageGalleryPlan": "empty"
+          },
+          "properties": {
+            "DefaultConnection": {
+              "value": "[concat('Data Source=tcp:', reference(concat('Microsoft.Sql/servers/', variables('coreimagegallerysqlserverName'))).fullyQualifiedDomainName, ',1433;Initial Catalog=', parameters('coreimagegallerysqldbName'), ';User Id=', parameters('coreimagegallerysqlserverAdminLoginUsername'), '@', variables('coreimagegallerysqlserverName'), ';Password=', parameters('coreimagegallerysqlserverAdminLoginPassword'), ';')]",
+              "type": "SQLAzure"
+            }
           }
         }
       ]
@@ -253,53 +318,6 @@
       "apiVersion": "2016-03-01",
       "location": "[resourceGroup().location]",
       "kind": "functionapp"
-    },
-    {
-      "name": "[variables('coreimagegallerysqlserverName')]",
-      "type": "Microsoft.Sql/servers",
-      "location": "[resourceGroup().location]",
-      "apiVersion": "2014-04-01-preview",
-      "dependsOn": [],
-      "tags": {
-        "displayName": "coreimagegallerysqlserver"
-      },
-      "properties": {
-        "administratorLogin": "[parameters('coreimagegallerysqlserverAdminLoginUsername')]",
-        "administratorLoginPassword": "[parameters('coreimagegallerysqlserverAdminLoginPassword')]"
-      },
-      "resources": [
-        {
-          "name": "AllowAllWindowsAzureIps",
-          "type": "firewallrules",
-          "location": "[resourceGroup().location]",
-          "apiVersion": "2014-04-01-preview",
-          "dependsOn": [
-            "[resourceId('Microsoft.Sql/servers', variables('coreimagegallerysqlserverName'))]"
-          ],
-          "properties": {
-            "startIpAddress": "0.0.0.0",
-            "endIpAddress": "0.0.0.0"
-          }
-        },
-        {
-          "name": "[parameters('coreimagegallerysqldbName')]",
-          "type": "databases",
-          "location": "[resourceGroup().location]",
-          "apiVersion": "2014-04-01-preview",
-          "dependsOn": [
-            "[resourceId('Microsoft.Sql/servers', variables('coreimagegallerysqlserverName'))]"
-          ],
-          "tags": {
-            "displayName": "coreimagegallerysqldb"
-          },
-          "properties": {
-            "collation": "[parameters('coreimagegallerysqldbCollation')]",
-            "edition": "[parameters('coreimagegallerysqldbEdition')]",
-            "maxSizeBytes": "1073741824",
-            "requestedServiceObjectiveName": "[parameters('coreimagegallerysqldbRequestedServiceObjectiveName')]"
-          }
-        }
-      ]
     },
     {
       "name": "[concat(parameters('coreimagegalleryplanName'), '-', resourceGroup().name)]",
