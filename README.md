@@ -10,6 +10,7 @@ Azure Services
 
 Technologies
 - ASP.NET Core 2.2
+- Visual Studio 2017 or later
 - Entity Framework
 - Azure
 
@@ -25,10 +26,10 @@ VS:
 - Choose your subscription
 - Choose a new or existing Resource Group
 - Click Deploy
-- in the PowerShell prompt, set an admin password for the SQL database
+- in the new PowerShell command prompt that spins up, set an admin password for the SQL database
 
 Azure CLI:
-- ls ./CoreImageGallery/Deploy/CoreImageGalleryARM/
+- cd ./CoreImageGallery/Deploy/CoreImageGalleryARM/
 - chmod +x ./deploy-azureresourcegroupbashcli.sh
 - ./deploy-azureresourcegroupbashcli.sh
 
@@ -54,4 +55,5 @@ VS:
 - Register a user by clicking the registration button.  Your user will be signed in.
 - Upload one or more image files
 - In a few moments refresh and you will see watermarked images that were processed by the function.  
+- visit the Azure Portal via https://aka.ms/publicportal to inspect the Resource Group, e.g.  Application Insights telemetry
 
