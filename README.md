@@ -14,7 +14,8 @@ Technologies
 - Azure
 
 Getting Started
-1) git clone the repo
+1) Clone the repo
+git clone https://github.com/Andrew-MSFT/BasicImageGallery.git 
 
 2) create all Azure resources using the azuredeploy.json ARM template and parameters.  Optionally configure the azuredeploy.paramemters.json file. 
 
