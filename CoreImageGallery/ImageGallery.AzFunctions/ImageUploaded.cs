@@ -1,11 +1,9 @@
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Linq;
-using ImageGallery.Model;
 using ImageGallery.Model;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
+using Microsoft.Extensions.Logging;
 
 namespace Watermarker
 {
@@ -14,19 +12,19 @@ namespace Watermarker
         const string WaterMarkText = "(c) CoreImageGallery";
 
         [FunctionName("ImageUploaded")]
-        public static void Run([BlobTrigger(Config.UploadContainer + "/{name}")]Stream inputBlob,
-                               [Blob(Config.WatermarkedContainer + "/{name}", FileAccess.Write)] Stream outputBlob,
+        public static void Run([BlobTrigger("images/{name}")]Stream inputBlob,
+                               [Blob("images-watermarked/{name}", FileAccess.Write)] Stream outputBlob,
                                string name,
-                               TraceWriter log)
+                               ILogger log)
         {
             try
             {
                 WaterMarker.WriteWatermark(WaterMarkText, inputBlob, outputBlob);
-                log.Info($"C# Blob trigger function Processed blob\n Name:{name} \n Size: {inputBlob.Length} Bytes");
+                log.LogInformation($"C# Blob trigger function Processed blob\n Name:{name} \n Size: {inputBlob.Length} Bytes");
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                log.Error($"Watermaking failed {e.Message}");
+                log.LogError($"Watermaking failed {e.Message}");
             }
         }
     }

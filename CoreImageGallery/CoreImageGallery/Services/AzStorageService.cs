@@ -1,20 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
-using Newtonsoft.Json;
-using System.Net;
-using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
+using ImageGallery.Models;
 using ImageGallery.Model;
 using ImageGallery.Model;
 using CoreImageGallery.Data;
+using CoreImageGallery.Extensions;
 
 namespace CoreImageGallery.Services
 {
@@ -33,7 +27,7 @@ namespace CoreImageGallery.Services
 
         public AzStorageService(IConfiguration config, ApplicationDbContext dbContext)
         {
-            _connectionString = config["AzureStorageConnectionString"];
+            _connectionString = config["AzureStorageConnection"];
             _account = CloudStorageAccount.Parse(_connectionString);
             _client = _account.CreateCloudBlobClient();
             _uploadContainer = _client.GetContainerReference(Config.UploadContainer);
@@ -42,51 +36,16 @@ namespace CoreImageGallery.Services
             _dbContext = dbContext;
         }
 
-        public async Task<UploadedImage> AddImageAsync(Stream stream, string originalName, string userName)
+        public async Task AddImageAsync(Stream stream, string originalName, string userName)
         {
             await InitializeResourcesAsync();
 
-            string uploadId = Guid.NewGuid().ToString();
-            string fileExtension = Path.GetExtension(originalName);
-            string fileName = ImagePrefix + uploadId + fileExtension;
+            UploadUtilities.GetImageProperties(originalName, userName, out string uploadId, out string fileName, out string userId);
 
             var imageBlob = _uploadContainer.GetBlockBlobReference(fileName);
             await imageBlob.UploadFromStreamAsync(stream);
 
-            var img = new UploadedImage
-            {
-                Id = uploadId,
-                FileName = fileName,
-                ImagePath = imageBlob.Uri.ToString(),
-                UploadTime = DateTime.Now,
-                UserHash = userName
-            };
-
-            await _dbContext.Images.AddAsync(img);
-            await _dbContext.SaveChangesAsync();
-
-            return img;
-        }
-
-
-        public async Task InitializeResourcesAsync()
-        {
-            if (!ResourcesInitialized)
-            {
-                //first Azure Storage resources
-                await _publicContainer.CreateIfNotExistsAsync();
-                await _uploadContainer.CreateIfNotExistsAsync();
-
-                var permissions = await _publicContainer.GetPermissionsAsync();
-                if (permissions.PublicAccess == BlobContainerPublicAccessType.Off || permissions.PublicAccess == BlobContainerPublicAccessType.Unknown)
-                {
-                    // If blob isn't public, we can't directly link to the pictures
-                    await _publicContainer.SetPermissionsAsync(new BlobContainerPermissions() { PublicAccess = BlobContainerPublicAccessType.Blob });
-                }
-
-                ResourcesInitialized = true;
-            }
-
+            await UploadUtilities.RecordImageUploadedAsync(_dbContext, uploadId, fileName, imageBlob.Uri.ToString(), userId);
         }
 
         public async Task<IEnumerable<UploadedImage>> GetImagesAsync()
@@ -108,6 +67,26 @@ namespace CoreImageGallery.Services
             }
 
             return imageList;
+        }
+
+        private async Task InitializeResourcesAsync()
+        {
+            if (!ResourcesInitialized)
+            {
+                //first Azure Storage resources
+                await _publicContainer.CreateIfNotExistsAsync();
+                await _uploadContainer.CreateIfNotExistsAsync();
+
+                var permissions = await _publicContainer.GetPermissionsAsync();
+                if (permissions.PublicAccess == BlobContainerPublicAccessType.Off || permissions.PublicAccess == BlobContainerPublicAccessType.Unknown)
+                {
+                    // If blob isn't public, we can't directly link to the pictures
+                    await _publicContainer.SetPermissionsAsync(new BlobContainerPermissions() { PublicAccess = BlobContainerPublicAccessType.Blob });
+                }
+
+                ResourcesInitialized = true;
+            }
+
         }
     }
 }
