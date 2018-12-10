@@ -1,0 +1,39 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "coreimagegalleryplanSkuName": {
+      "value": "S1"
+    },
+    "coreimagegalleryappinsightsName": {
+      "value": "coreimagegalleryappinsights"
+    },
+    "coreimagegalleryplanName": {
+      "value": "coreimagegalleryplan"
+    },
+    "coreimagegallerywebappName": {
+      "value": "coreimagegallerywebapp"
+    },
+    "coreimagegallerysqlserverName": {
+      "value": "coreimagegallerysqlserver"
+    },
+    "coreimagegallerysqldbName": {
+      "value": "coreimagegallerysqldb"
+    },
+    "coreimagegallerysqlserverAdminLoginUsername": {
+      "value": "dbadmin"
+    },
+    "coreimagegallerystorageType": {
+      "value": "Standard_LRS"
+    },
+    "coreimagegallerystorageName": {
+      "value": "storage"
+    },
+    "coreimagegalleryfunctionsappName": {
+      "value": "coreimagegalleryfunctionsapp"
+    },
+    "useuniquenamesuffixes": {
+      "value": "Enabled"
+    }
+  }
+}
