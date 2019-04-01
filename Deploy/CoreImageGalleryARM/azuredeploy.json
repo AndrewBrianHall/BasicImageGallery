@@ -124,10 +124,10 @@
   },
   "resources": [
     {
-      "name": "coreimagegalleryappinsights",
+      "name": "[parameters('coreimagegalleryappinsightsName')]",
       "type": "Microsoft.Insights/components",
-      "location": "East US",
       "apiVersion": "2014-04-01",
+      "location": "[resourceGroup().location]",
       "dependsOn": [
       ],
       "tags": {

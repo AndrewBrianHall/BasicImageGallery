@@ -3,22 +3,22 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "coreimagegalleryplanSkuName": {
-      "value": "S1"
+      "value": "S2"
     },
     "coreimagegalleryappinsightsName": {
-      "value": "coreimagegalleryappinsights"
+      "value": "imggalleryappinsights"
     },
     "coreimagegalleryplanName": {
-      "value": "coreimagegalleryplan"
+      "value": "imggalleryplan"
     },
     "coreimagegallerywebappName": {
-      "value": "coreimagegallerywebapp"
+      "value": "imggallerywebapp"
     },
     "coreimagegallerysqlserverName": {
-      "value": "coreimagegallerysqlserver"
+      "value": "imggallerysqlserver"
     },
     "coreimagegallerysqldbName": {
-      "value": "coreimagegallerysqldb"
+      "value": "imggallerysqldb"
     },
     "coreimagegallerysqlserverAdminLoginUsername": {
       "value": "dbadmin"
@@ -27,13 +27,13 @@
       "value": "Standard_LRS"
     },
     "coreimagegallerystorageName": {
-      "value": "storage"
+      "value": "imggallerystorage"
     },
     "coreimagegalleryfunctionsappName": {
-      "value": "coreimagegalleryfunctionsapp"
+      "value": "imggalleryfunctionsapp"
     },
     "useuniquenamesuffixes": {
-      "value": "Enabled"
+      "value": "Disabled"
     }
   }
 }
