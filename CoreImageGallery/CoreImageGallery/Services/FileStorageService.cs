@@ -1,11 +1,9 @@
 ﻿using CoreImageGallery.Data;
 using CoreImageGallery.Extensions;
-using ImageGallery.Models;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
+using ImageGallery.Models;
 
 namespace CoreImageGallery.Services
 {
