@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ImageGallery.Models
+namespace ImageGallery.Model
 {
     public class UploadedImage
     {

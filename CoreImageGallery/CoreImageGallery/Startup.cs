@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using CoreImageGallery.Data;
 using CoreImageGallery.Services;
+using ImageGallery.Model;
 
 namespace CoreImageGallery
 {
@@ -38,6 +39,7 @@ namespace CoreImageGallery
                 {
                     options.Conventions.AuthorizeFolder("/Account/Manage");
                     options.Conventions.AuthorizePage("/Account/Logout");
+                    //options.Conventions.AuthorizePage("/Upload");
                 });
 
             services.AddScoped<IStorageService, AzStorageService>();

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using ImageGallery.Models;
+using ImageGallery.Model;
 
 namespace CoreImageGallery.Services
 {
