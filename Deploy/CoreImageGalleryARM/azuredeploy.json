@@ -288,6 +288,7 @@
       },
       "properties": {
         "siteConfig": {
+          "alwaysOn": true,
           "appSettings": [
             {
               "name": "FUNCTIONS_WORKER_RUNTIME",
@@ -320,8 +321,9 @@
           ]
         },
         "name": "[variables('coreimagegalleryfunctionsappName')]",
-        "clientAffinityEnabled": false,
-        "reserved": false
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('coreimagegalleryplanName'))]",
+        "hostingEnvironment": "",
+        "clientAffinityEnabled": false
       },
       "apiVersion": "2016-03-01",
       "location": "[resourceGroup().location]",
