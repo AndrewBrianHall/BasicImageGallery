@@ -290,3 +290,6 @@ __pycache__/
 /CoreImageGallery/.vs/CoreImageGallery/DesignTimeBuild
 /CoreImageGallery/.vs/CoreImageGallery/v15/Server/sqlite3
 /CoreImageGallery/Deploy/.vs
+/.vs/slnx.sqlite
+/.vs
+/CoreImageGallery/.vs/CoreImageGallery

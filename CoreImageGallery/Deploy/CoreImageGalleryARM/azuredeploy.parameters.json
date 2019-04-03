@@ -3,7 +3,7 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "coreimagegalleryplanSkuName": {
-      "value": "S1"
+      "value": "S2"
     },
     "coreimagegalleryappinsightsName": {
       "value": "coreimagegalleryappinsights"

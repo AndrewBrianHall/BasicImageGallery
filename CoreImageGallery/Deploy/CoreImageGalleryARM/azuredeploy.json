@@ -124,9 +124,9 @@
   },
   "resources": [
     {
-      "name": "coreimagegalleryappinsights",
+      "name": "[parameters('coreimagegalleryappinsightsName')]",
       "type": "Microsoft.Insights/components",
-      "location": "East US",
+      "location": "[resourceGroup().location]",
       "apiVersion": "2014-04-01",
       "dependsOn": [
       ],
@@ -323,8 +323,10 @@
         "clientAffinityEnabled": false,
         "reserved": false
       },
-      "apiVersion": "2016-03-01",
       "location": "[resourceGroup().location]",
+      "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('coreimagegalleryplanName'))]",
+      "hostingEnvironment": "",
+      "clientAffinityEnabled": false,
       "kind": "functionapp"
     },
     {
