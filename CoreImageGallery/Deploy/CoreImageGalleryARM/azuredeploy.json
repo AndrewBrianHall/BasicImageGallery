@@ -278,16 +278,26 @@
       ]
     },
     {
+      "apiVersion": "2016-08-01",
       "name": "[variables('coreimagegalleryfunctionsappName')]",
       "type": "Microsoft.Web/sites",
+      "location": "[resourceGroup().location]",
+      "kind": "functionapp",
       "dependsOn": [
-        "[resourceId('microsoft.insights/components/', parameters('coreimagegalleryappinsightsName'))]"
+        "[resourceId('microsoft.insights/components/', parameters('coreimagegalleryappinsightsName'))]",
+        "[resourceId('Microsoft.Web/serverfarms', parameters('coreimagegalleryplanName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('coreimagegallerystorageName'))]"
       ],
       "tags": {
         "displayName": "coreimagegalleryfunctionsapp"
       },
       "properties": {
+        "name": "[variables('coreimagegalleryfunctionsappName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('coreimagegalleryplanName'))]",
+        "clientAffinityEnabled": false,
+        "hostingEnvironment": "",
         "siteConfig": {
+          "alwaysOn": true,
           "appSettings": [
             {
               "name": "FUNCTIONS_WORKER_RUNTIME",
@@ -318,16 +328,8 @@
               "value": "[reference(concat('microsoft.insights/components/', parameters('coreimagegalleryappinsightsName'))).InstrumentationKey]"
             }
           ]
-        },
-        "name": "[variables('coreimagegalleryfunctionsappName')]",
-        "clientAffinityEnabled": false,
-        "reserved": false
-      },
-      "location": "[resourceGroup().location]",
-      "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('coreimagegalleryplanName'))]",
-      "hostingEnvironment": "",
-      "clientAffinityEnabled": false,
-      "kind": "functionapp"
+        }
+      }
     },
     {
       "name": "[concat(parameters('coreimagegalleryplanName'), '-', resourceGroup().name)]",
