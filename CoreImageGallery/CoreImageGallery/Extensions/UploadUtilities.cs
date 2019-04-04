@@ -1,5 +1,5 @@
 ﻿using CoreImageGallery.Data;
-using ImageGallery.Models;
+using ImageGallery.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;

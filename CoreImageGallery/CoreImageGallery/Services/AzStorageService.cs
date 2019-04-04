@@ -5,10 +5,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using ImageGallery.Model;
-using ImageGallery.Model;
 using CoreImageGallery.Data;
 using CoreImageGallery.Extensions;
-using ImageGallery.Models;
 
 namespace CoreImageGallery.Services
 {
