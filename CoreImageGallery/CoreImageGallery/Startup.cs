@@ -72,6 +72,12 @@ namespace CoreImageGallery
                 app.UseExceptionHandler("/Error");
             }
 
+            //Run Entity Core migrations on start
+            using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
+            }
+
             app.UseStaticFiles();
 
             app.UseAuthentication();

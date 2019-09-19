@@ -9,8 +9,8 @@ Azure Services
 - Storage
 
 Technologies
-- ASP.NET Core 2.2
-- Visual Studio 2017 or later
+- ASP.NET Core 3.0
+- Visual Studio 2017 or later (Visual Studio 2019 16.3 recommended)
 - Entity Framework
 - Azure
 
