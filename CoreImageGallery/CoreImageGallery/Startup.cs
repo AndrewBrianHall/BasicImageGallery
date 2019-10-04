@@ -32,7 +32,7 @@ namespace CoreImageGallery
             //for asp.net core 3.0 MVC
             //services.AddControllers();
             services.AddControllersWithViews();
-            //services.AddRazorPages();
+            services.AddRazorPages();
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
@@ -77,13 +77,15 @@ namespace CoreImageGallery
                     scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
                 }
             }
-                       
+            //asp.net 3.0 fixes for MVC and routing
+            app.UseRouting();
+
             app.UseStaticFiles();
 
             app.UseAuthentication();
+            app.UseHttpsRedirection();
 
-            //asp.net 3.0 fixes for MVC and routing
-            app.UseRouting();
+ 
 
             app.UseCors();
 
